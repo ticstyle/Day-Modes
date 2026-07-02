@@ -79,15 +79,11 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         config_entry: config_entries.ConfigEntry,
     ) -> DayModesOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return DayModesOptionsFlowHandler(config_entry)
+        return DayModesOptionsFlowHandler()
 
 
 class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow changes for reconfiguration."""
-
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialize options flow passing entry reference to parent class."""
-        super().__init__(config_entry)
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -96,6 +92,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
+        # Access current settings through the inherited config_entry property
         current_settings = {**self.config_entry.data, **self.config_entry.options}
 
         return self.async_show_form(
