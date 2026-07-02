@@ -2,14 +2,21 @@
   "config": {
     "step": {
       "user": {
-        "title": "Create Day Mode Sensor",
-        "description": "Configure the time ranges and the home zone to track for your day states.",
+        "title": "Day Modes Configuration",
+        "description": "Define your daily schedule thresholds and occupancy zone.",
         "data": {
-          "home_zone": "Home Zone",
-          "morning_time": "Morning Starts At",
-          "day_time": "Day Starts At",
-          "evening_time": "Evening Starts At",
-          "night_time": "Night Starts At"
+          "home_zone": "Tracked Zone",
+          "morning_time": "Morning Mode",
+          "day_time": "Day Mode",
+          "evening_time": "Evening Mode",
+          "night_time": "Night Mode"
+        },
+        "data_description": {
+          "home_zone": "The zone used to determine family occupancy status (e.g., zone.home).",
+          "morning_time": "Start time for the morning state. Use HH:MM format (e.g., 06:00).",
+          "day_time": "Start time for the active day state. Use HH:MM format (e.g., 09:00).",
+          "evening_time": "Start time for the evening relaxation state. Use HH:MM format (e.g., 20:00).",
+          "night_time": "Start time for the night state. Use HH:MM format (e.g., 23:00)."
         }
       }
     }
@@ -17,14 +24,21 @@
   "options": {
     "step": {
       "init": {
-        "title": "Configure Day Mode Sensor",
-        "description": "Adjust the times or change the tracked zone for this sensor.",
+        "title": "Configure Day Mode Settings",
+        "description": "Adjust the time boundaries or change your tracked zone dynamic settings.",
         "data": {
-          "home_zone": "Home Zone",
-          "morning_time": "Morning Starts At",
-          "day_time": "Day Starts At",
-          "evening_time": "Evening Starts At",
-          "night_time": "Night Starts At"
+          "home_zone": "Tracked Zone",
+          "morning_time": "Morning Mode",
+          "day_time": "Day Mode",
+          "evening_time": "Evening Mode",
+          "night_time": "Night Mode"
+        },
+        "data_description": {
+          "home_zone": "The zone used to determine family occupancy status (e.g., zone.home).",
+          "morning_time": "Start time for the morning state. Use HH:MM format (e.g., 06:00).",
+          "day_time": "Start time for the active day state. Use HH:MM format (e.g., 09:00).",
+          "evening_time": "Start time for the evening relaxation state. Use HH:MM format (e.g., 20:00).",
+          "night_time": "Start time for the night state. Use HH:MM format (e.g., 23:00)."
         }
       }
     }
