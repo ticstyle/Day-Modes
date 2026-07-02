@@ -38,7 +38,7 @@ async def async_setup_entry(
     # Settings can live in options or data depending on reconfiguration history
     config = {**config_entry.data, **config_entry.options}
 
-    sensor = DayModesSensor(config_entry.entry_id, config_entry.title, config)
+    sensor = DayModesSensor(config_entry.entry_id, config)
     async_add_entities([sensor], update_before_add=True)
 
 
@@ -48,19 +48,29 @@ class DayModesSensor(SensorEntity):
     _attr_icon = "mdi:clock-time-four-outline"
     _attr_has_entity_name = False
 
-    def __init__(self, entry_id: str, name: str, config: dict[str, Any]) -> None:
+    def __init__(self, entry_id: str, config: dict[str, Any]) -> None:
         """Initialize the sensor."""
         self._attr_unique_id = f"{entry_id}_sensor"
-        self._attr_name = name
+        self._attr_name = "Day modes"
+
+        # Explicitly force the Home Assistant entity ID to be sensor.day_modes
+        self.entity_id = "sensor.day_modes"
+
         self._config = config
         self._unsub_listeners: list[Any] = []
 
         # Parse string times to time objects for comparisons
         self._times = {
-            MODE_MORNING: datetime.strptime(config[CONF_MORNING_TIME], "%H:%M:%S").time(),
+            MODE_MORNING: datetime.strptime(
+                config[CONF_MORNING_TIME], "%H:%M:%S"
+            ).time(),
             MODE_DAY: datetime.strptime(config[CONF_DAY_TIME], "%H:%M:%S").time(),
-            MODE_EVENING: datetime.strptime(config[CONF_EVENING_TIME], "%H:%M:%S").time(),
-            MODE_NIGHT: datetime.strptime(config[CONF_NIGHT_TIME], "%H:%M:%S").time(),
+            MODE_EVENING: datetime.strptime(
+                config[CONF_EVENING_TIME], "%H:%M:%S"
+            ).time(),
+            MODE_NIGHT: datetime.strptime(
+                config[CONF_NIGHT_TIME], "%H:%M:%S"
+            ).time(),
         }
 
     async def async_added_to_hass(self) -> None:
@@ -74,7 +84,9 @@ class DayModesSensor(SensorEntity):
         # Listen to changes in the tracked zone
         self._unsub_listeners.append(
             async_track_state_change_event(
-                self.hass, [self._config[CONF_HOME_ZONE]], async_state_changed_listener
+                self.hass,
+                [self._config[CONF_HOME_ZONE]],
+                async_state_changed_listener,
             )
         )
 
