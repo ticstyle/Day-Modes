@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Create Day Mode Sensor",
+        "description": "Configure the time ranges and the home zone to track for your day states.",
+        "data": {
+          "home_zone": "Home Zone",
+          "morning_time": "Morning Starts At",
+          "day_time": "Day Starts At",
+          "evening_time": "Evening Starts At",
+          "night_time": "Night Starts At"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Day Mode Sensor",
+        "description": "Adjust the times or change the tracked zone for this sensor.",
+        "data": {
+          "home_zone": "Home Zone",
+          "morning_time": "Morning Starts At",
+          "day_time": "Day Starts At",
+          "evening_time": "Evening Starts At",
+          "night_time": "Night Starts At"
+        }
+      }
+    }
+  }
+}
