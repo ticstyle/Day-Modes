@@ -42,5 +42,19 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "current_mode": {
+        "name": "Current mode",
+        "state": {
+          "away": "Away",
+          "morning": "Morning",
+          "day": "Day",
+          "evening": "Evening",
+          "night": "Night"
+        }
+      }
+    }
   }
 }
