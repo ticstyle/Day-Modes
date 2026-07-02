@@ -2,14 +2,21 @@
   "config": {
     "step": {
       "user": {
-        "title": "Skapa Day Mode-sensor",
-        "description": "Ställ in tidsintervaller och vilken hemzon som ska spåras för dina olika lägen.",
+        "title": "Konfigurera Day modes",
+        "description": "Definiera dina tidsgränser samt vilken zon som ska avgöra när du är hemma.",
         "data": {
-          "home_zone": "Hemzon",
-          "morning_time": "Morgon börjar kl",
-          "day_time": "Dag börjar kl",
-          "evening_time": "Kväll börjar kl",
-          "night_time": "Natt börjar kl"
+          "home_zone": "Spårad zon",
+          "morning_time": "Morgonläge",
+          "day_time": "Dagläge",
+          "evening_time": "Kvällsläge",
+          "night_time": "Nattläge"
+        },
+        "data_description": {
+          "home_zone": "Zonen som används för att känna av om någon är hemma (t.ex. zone.home).",
+          "morning_time": "Starttid för morgonläget. Ange i formatet TT:MM (t.ex. 06:00).",
+          "day_time": "Starttid för dagläget. Ange i formatet TT:MM (t.ex. 09:00).",
+          "evening_time": "Starttid för kvällsläget. Ange i formatet TT:MM (t.ex. 20:00).",
+          "night_time": "Starttid för nattläget. Ange i formatet TT:MM (t.ex. 23:00)."
         }
       }
     }
@@ -17,14 +24,21 @@
   "options": {
     "step": {
       "init": {
-        "title": "Konfigurera Day Mode-sensor",
-        "description": "Justera tidsinställningar eller ändra den spårade zonen för denna sensor.",
+        "title": "Ändra inställningar för Day modes",
+        "description": "Justera tidsgränserna eller byt ut vilken zon som ska övervakas.",
         "data": {
-          "home_zone": "Hemzon",
-          "morning_time": "Morgon börjar kl",
-          "day_time": "Dag börjar kl",
-          "evening_time": "Kväll börjar kl",
-          "night_time": "Natt börjar kl"
+          "home_zone": "Spårad zon",
+          "morning_time": "Morgonläge",
+          "day_time": "Dagläge",
+          "evening_time": "Kvällsläge",
+          "night_time": "Nattläge"
+        },
+        "data_description": {
+          "home_zone": "Zonen som används för att känna av om någon är hemma (t.ex. zone.home).",
+          "morning_time": "Starttid för morgonläget. Ange i formatet TT:MM (t.ex. 06:00).",
+          "day_time": "Starttid för dagläget. Ange i formatet TT:MM (t.ex. 09:00).",
+          "evening_time": "Starttid för kvällsläget. Ange i formatet TT:MM (t.ex. 20:00).",
+          "night_time": "Starttid för nattläget. Ange i formatet TT:MM (t.ex. 23:00)."
         }
       }
     }
