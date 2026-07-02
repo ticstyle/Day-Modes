@@ -29,13 +29,20 @@ from .const import (
 )
 
 
+def parse_time_string(time_str: str) -> time:
+    """Parse time string supporting both HH:MM and legacy HH:MM:SS formats."""
+    try:
+        return datetime.strptime(time_str, "%H:%M").time()
+    except ValueError:
+        return datetime.strptime(time_str, "%H:%M:%S").time()
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Day modes sensor platform."""
-    # Settings can live in options or data depending on reconfiguration history
     config = {**config_entry.data, **config_entry.options}
 
     sensor = DayModesSensor(config_entry.entry_id, config)
@@ -52,25 +59,16 @@ class DayModesSensor(SensorEntity):
         """Initialize the sensor."""
         self._attr_unique_id = f"{entry_id}_sensor"
         self._attr_name = "Day modes"
-
-        # Explicitly force the Home Assistant entity ID to be sensor.day_modes
         self.entity_id = "sensor.day_modes"
-
         self._config = config
         self._unsub_listeners: list[Any] = []
 
-        # Parse string times to time objects for comparisons
+        # Parse string times safely to time objects
         self._times = {
-            MODE_MORNING: datetime.strptime(
-                config[CONF_MORNING_TIME], "%H:%M:%S"
-            ).time(),
-            MODE_DAY: datetime.strptime(config[CONF_DAY_TIME], "%H:%M:%S").time(),
-            MODE_EVENING: datetime.strptime(
-                config[CONF_EVENING_TIME], "%H:%M:%S"
-            ).time(),
-            MODE_NIGHT: datetime.strptime(
-                config[CONF_NIGHT_TIME], "%H:%M:%S"
-            ).time(),
+            MODE_MORNING: parse_time_string(config[CONF_MORNING_TIME]),
+            MODE_DAY: parse_time_string(config[CONF_DAY_TIME]),
+            MODE_EVENING: parse_time_string(config[CONF_EVENING_TIME]),
+            MODE_NIGHT: parse_time_string(config[CONF_NIGHT_TIME]),
         }
 
     async def async_added_to_hass(self) -> None:
@@ -81,7 +79,6 @@ class DayModesSensor(SensorEntity):
             """Handle zone state changes."""
             self._update_state()
 
-        # Listen to changes in the tracked zone
         self._unsub_listeners.append(
             async_track_state_change_event(
                 self.hass,
@@ -90,7 +87,6 @@ class DayModesSensor(SensorEntity):
             )
         )
 
-        # Register time triggers for each configured mode boundary
         for mode_time in self._times.values():
             self._unsub_listeners.append(
                 async_track_time_change(
@@ -120,7 +116,6 @@ class DayModesSensor(SensorEntity):
         zone_entity = self._config[CONF_HOME_ZONE]
         zone_state = self.hass.states.get(zone_entity)
 
-        # If zone details are missing, default safely to avoiding false triggers
         if zone_state is None or zone_state.state == STATE_UNKNOWN:
             zone_count = 0
         else:
@@ -129,13 +124,11 @@ class DayModesSensor(SensorEntity):
             except ValueError:
                 zone_count = 0
 
-        # Condition 1: If nobody is inside the specified zone, it's Away
         if zone_count < 1:
             self._attr_native_value = MODE_AWAY
             self.async_write_ha_state()
             return
 
-        # Condition 2: Evaluate time periods if someone is home
         current_time = datetime.now().time()
         t_morning = self._times[MODE_MORNING]
         t_day = self._times[MODE_DAY]
@@ -149,7 +142,6 @@ class DayModesSensor(SensorEntity):
         elif t_evening <= current_time < t_night:
             calculated_mode = MODE_EVENING
         else:
-            # Handles night mode transitioning over midnight
             calculated_mode = MODE_NIGHT
 
         self._attr_native_value = calculated_mode
