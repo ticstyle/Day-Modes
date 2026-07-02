@@ -88,6 +88,7 @@ class DayModesSensor(SensorEntity):
         self.entity_id = "sensor.day_modes"
         self._config = config
         self._attr_device_info = device_info
+        self._attr_name = "Current mode"
         self._unsub_listeners: list[Any] = []
 
         # Parse string times safely to time objects
@@ -205,3 +206,12 @@ class DayModesTimeSensor(SensorEntity):
         self.entity_id = f"sensor.day_modes_{config_key}"
         self._attr_device_info = device_info
         self._attr_native_value = config[config_key]
+
+        # Explicit English fallback names mapping
+        names = {
+            CONF_MORNING_TIME: "Morning start time",
+            CONF_DAY_TIME: "Day start time",
+            CONF_EVENING_TIME: "Evening start time",
+            CONF_NIGHT_TIME: "Night start time",
+        }
+        self._attr_name = names.get(config_key)
