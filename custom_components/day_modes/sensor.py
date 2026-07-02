@@ -9,6 +9,7 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNKNOWN
 from homeassistant.core import Event, HomeAssistant, callback
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import (
     async_track_state_change_event,
@@ -16,6 +17,7 @@ from homeassistant.helpers.event import (
 )
 
 from .const import (
+    DOMAIN,
     CONF_HOME_ZONE,
     CONF_MORNING_TIME,
     CONF_DAY_TIME,
@@ -50,18 +52,26 @@ async def async_setup_entry(
 
 
 class DayModesSensor(SensorEntity):
-    """Representation of a Day Mode Sensor."""
+    """Representation of a Day Mode Sensor wrapped inside a Device."""
 
     _attr_icon = "mdi:clock-time-four-outline"
-    _attr_has_entity_name = False
+    _attr_has_entity_name = True
+    _attr_translation_key = "current_mode"
 
     def __init__(self, entry_id: str, config: dict[str, Any]) -> None:
-        """Initialize the sensor."""
+        """Initialize the sensor and its device container."""
         self._attr_unique_id = f"{entry_id}_sensor"
-        self._attr_name = "Day modes"
         self.entity_id = "sensor.day_modes"
         self._config = config
         self._unsub_listeners: list[Any] = []
+
+        # Construct the device registry entry to map the dashboard layout cleanly
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry_id)},
+            name="Day modes",
+            manufacturer="ticstyle",
+            model="Dynamic Day Cycle",
+        )
 
         # Parse string times safely to time objects
         self._times = {
