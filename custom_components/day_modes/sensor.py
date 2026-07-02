@@ -44,34 +44,51 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the Day modes sensor platform."""
+    """Set up the Day modes sensor platform and time entities."""
     config = {**config_entry.data, **config_entry.options}
 
-    sensor = DayModesSensor(config_entry.entry_id, config)
-    async_add_entities([sensor], update_before_add=True)
+    # Generate the parent device container info
+    device_info = DeviceInfo(
+        identifiers={(DOMAIN, config_entry.entry_id)},
+        name="Day modes",
+        manufacturer="ticstyle",
+        model="Dynamic Day Cycle",
+    )
+
+    # Instantiate the primary tracker alongside the 4 layout configuration sensors
+    entities = [
+        DayModesSensor(config_entry.entry_id, config, device_info),
+        DayModesTimeSensor(
+            config_entry.entry_id, config, CONF_MORNING_TIME, device_info
+        ),
+        DayModesTimeSensor(config_entry.entry_id, config, CONF_DAY_TIME, device_info),
+        DayModesTimeSensor(
+            config_entry.entry_id, config, CONF_EVENING_TIME, device_info
+        ),
+        DayModesTimeSensor(
+            config_entry.entry_id, config, CONF_NIGHT_TIME, device_info
+        ),
+    ]
+
+    async_add_entities(entities, update_before_add=True)
 
 
 class DayModesSensor(SensorEntity):
-    """Representation of a Day Mode Sensor wrapped inside a Device."""
+    """Representation of the core Day Mode State Sensor."""
 
     _attr_icon = "mdi:clock-time-four-outline"
     _attr_has_entity_name = True
     _attr_translation_key = "current_mode"
 
-    def __init__(self, entry_id: str, config: dict[str, Any]) -> None:
-        """Initialize the sensor and its device container."""
+    def __init__(
+        self, entry_id: str, config: dict[str, Any], device_info: DeviceInfo
+    ) -> None:
+        """Initialize the sensor."""
         self._attr_unique_id = f"{entry_id}_sensor"
         self.entity_id = "sensor.day_modes"
         self._config = config
+        self._attr_device_info = device_info
         self._unsub_listeners: list[Any] = []
-
-        # Construct the device registry entry to map the dashboard layout cleanly
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, entry_id)},
-            name="Day modes",
-            manufacturer="ticstyle",
-            model="Dynamic Day Cycle",
-        )
 
         # Parse string times safely to time objects
         self._times = {
@@ -159,7 +176,7 @@ class DayModesSensor(SensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Return entity specific state attributes reflecting current setups."""
+        """Return entity specific state attributes."""
         return {
             "tracked_zone": self._config[CONF_HOME_ZONE],
             "morning_time": self._config[CONF_MORNING_TIME],
@@ -167,3 +184,20 @@ class DayModesSensor(SensorEntity):
             "evening_time": self._config[CONF_EVENING_TIME],
             "night_time": self._config[CONF_NIGHT_TIME],
         }
+
+
+class DayModesTimeSensor(SensorEntity):
+    """Representation of a configuration time display sensor."""
+
+    _attr_icon = "mdi:clock-outline"
+    _attr_has_entity_name = True
+
+    def __init__(
+        self, entry_id: str, config: dict[str, Any], config_key: str, device_info: DeviceInfo
+    ) -> None:
+        """Initialize the time sensor."""
+        self._attr_unique_id = f"{entry_id}_{config_key}"
+        self._attr_translation_key = config_key
+        self.entity_id = f"sensor.day_modes_{config_key}"
+        self._attr_device_info = device_info
+        self._attr_native_value = config[config_key]
