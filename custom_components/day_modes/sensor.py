@@ -47,12 +47,12 @@ async def async_setup_entry(
     """Set up the Day modes sensor platform and time entities."""
     config = {**config_entry.data, **config_entry.options}
 
-    # Generate the parent device container info
+    # Generate the parent device container info using Day Modes as the model
     device_info = DeviceInfo(
         identifiers={(DOMAIN, config_entry.entry_id)},
         name="Day modes",
         manufacturer="ticstyle",
-        model="Dynamic Day Cycle",
+        model="Day Modes",
     )
 
     # Instantiate the primary tracker alongside the 4 layout configuration sensors
@@ -193,7 +193,11 @@ class DayModesTimeSensor(SensorEntity):
     _attr_has_entity_name = True
 
     def __init__(
-        self, entry_id: str, config: dict[str, Any], config_key: str, device_info: DeviceInfo
+        self,
+        entry_id: str,
+        config: dict[str, Any],
+        config_key: str,
+        device_info: DeviceInfo,
     ) -> None:
         """Initialize the time sensor."""
         self._attr_unique_id = f"{entry_id}_{config_key}"
