@@ -32,11 +32,11 @@ Via [HACS](https://hacs.xyz/) or manually copy the `day_modes` folder from the [
 Add the integration via the Home Assistant User Interface. Go to **Settings -> Devices & Services -> Add Integration** and search for **Day modes**.
 
 ## 📊 Available Entities
-When configuring a tracking instance for your zone (e.g., `zone.home`), the integration generates a first-class sensor entity:
+Regardless of your tracked zone name, the integration locks the primary state entity to a predictable, clean identity:
 
 | Entity ID | Name in UI | State Example | Description |
 | :--- | :--- | :--- | :--- |
-| `sensor.day_mode_home` | Day Mode (Home) | `day` | Operational state tracking. Returns `morning`, `day`, `evening`, `night`, or `away`. |
+| `sensor.day_modes` | Day modes | `day` | Operational state tracking. Returns `morning`, `day`, `evening`, `night`, or `away`. |
 
 ### Entity Attributes
 The generated sensor explicitly exposes your active settings within its state attributes for easy UI mapping:
@@ -53,10 +53,10 @@ Since the states are native string values, you can use standard entity cards, co
 type: markdown
 title: "House Status"
 content: >
-  Current House Mode: **{{ states('sensor.day_mode_home') | capitalize }}**
+  Current House Mode: **{{ states('sensor.day_modes') | capitalize }}**
   
-  {% if is_state('sensor.day_mode_home', 'away') %}
+  {% if is_state('sensor.day_modes', 'away') %}
     🏠 The house is currently in eco-mode while everyone is out.
   {% else %}
-    ⏰ Tonight's night mode schedule is set to trigger at {{ state_attr('sensor.day_mode_home', 'night_time') }}.
+    ⏰ Tonight's night mode schedule is set to trigger at {{ state_attr('sensor.day_modes', 'night_time') }}.
   {% endif %}
