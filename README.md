@@ -1,1 +1,1 @@
-# Day-Modes
+# Day Modes
