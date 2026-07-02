@@ -1,10 +1,10 @@
 {
   "domain": "day_modes",
-  "name": "Day modes",
+  "name": "Day Modes",
   "codeowners": ["@ticstyle"],
   "config_flow": true,
   "documentation": "https://github.com/ticstyle/Day-Modes",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/ticstyle/Day-Modes/issues",
-  "version": "1.1.0"
+  "version": "1.2.0"
 }
