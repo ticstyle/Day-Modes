@@ -2,21 +2,21 @@
   "config": {
     "step": {
       "user": {
-        "title": "Konfigurera Day modes",
-        "description": "Definiera dina tidsgränser samt vilken zon som ska avgöra när du är hemma.",
+        "title": "Day modes",
+        "description": "Konfigurera ditt dygns schema. Sensorn växlar automatiskt mellan dessa lägen baserat på klockslagen, så länge någon befinner sig inom den spårade zonen.",
         "data": {
           "home_zone": "Spårad zon",
-          "morning_time": "Morgonläge",
-          "day_time": "Dagläge",
-          "evening_time": "Kvällsläge",
-          "night_time": "Nattläge"
+          "morning_time": "Morgonläge börjar",
+          "day_time": "Dagläge börjar",
+          "evening_time": "Kvällsläge börjar",
+          "night_time": "Nattläge börjar"
         },
         "data_description": {
-          "home_zone": "Zonen som används för att känna av om någon är hemma (t.ex. zone.home).",
-          "morning_time": "Starttid för morgonläget. Ange i formatet TT:MM (t.ex. 06:00).",
-          "day_time": "Starttid för dagläget. Ange i formatet TT:MM (t.ex. 09:00).",
-          "evening_time": "Starttid för kvällsläget. Ange i formatet TT:MM (t.ex. 20:00).",
-          "night_time": "Starttid för nattläget. Ange i formatet TT:MM (t.ex. 23:00)."
+          "home_zone": "Zonen som övervakas för närvaro (t.ex. zone.home). Om zonen är tom aktiveras läget 'Borta' omedelbart.",
+          "morning_time": "Ange som TT:MM (t.ex. 06:00). Aktivt när någon är hemma under detta tidsintervall.",
+          "day_time": "Ange som TT:MM (t.ex. 09:00). Aktivt när någon är hemma under detta tidsintervall.",
+          "evening_time": "Ange som TT:MM (t.ex. 20:00). Aktivt när någon är hemma under detta tidsintervall.",
+          "night_time": "Ange som TT:MM (t.ex. 23:00). Aktivt när någon är hemma under detta tidsintervall."
         }
       }
     }
@@ -24,21 +24,21 @@
   "options": {
     "step": {
       "init": {
-        "title": "Ändra inställningar för Day modes",
-        "description": "Justera tidsgränserna eller byt ut vilken zon som ska övervakas.",
+        "title": "Inställningar för Day modes",
+        "description": "Justera dina tidsgränser eller byt ut vilken zon som ska övervakas. Ändringarna verkställs direkt utan att du tappar historik.",
         "data": {
           "home_zone": "Spårad zon",
-          "morning_time": "Morgonläge",
-          "day_time": "Dagläge",
-          "evening_time": "Kvällsläge",
-          "night_time": "Nattläge"
+          "morning_time": "Morgonläge börjar",
+          "day_time": "Dagläge börjar",
+          "evening_time": "Kvällsläge börjar",
+          "night_time": "Nattläge börjar"
         },
         "data_description": {
-          "home_zone": "Zonen som används för att känna av om någon är hemma (t.ex. zone.home).",
-          "morning_time": "Starttid för morgonläget. Ange i formatet TT:MM (t.ex. 06:00).",
-          "day_time": "Starttid för dagläget. Ange i formatet TT:MM (t.ex. 09:00).",
-          "evening_time": "Starttid för kvällsläget. Ange i formatet TT:MM (t.ex. 20:00).",
-          "night_time": "Starttid för nattläget. Ange i formatet TT:MM (t.ex. 23:00)."
+          "home_zone": "Zonen som övervakas för närvaro (t.ex. zone.home). Om zonen är tom aktiveras läget 'Borta' omedelbart.",
+          "morning_time": "Ange som TT:MM (t.ex. 06:00). Aktivt när någon är hemma under detta tidsintervall.",
+          "day_time": "Ange som TT:MM (t.ex. 09:00). Aktivt när någon är hemma under detta tidsintervall.",
+          "evening_time": "Ange som TT:MM (t.ex. 20:00). Aktivt när någon är hemma under detta tidsintervall.",
+          "night_time": "Ange som TT:MM (t.ex. 23:00). Aktivt när någon är hemma under detta tidsintervall."
         }
       }
     }
