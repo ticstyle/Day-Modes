@@ -13,7 +13,7 @@
         },
         "data_description": {
           "home_zone": "Zonen som används för att känna av om någon är hemma (t.ex. zone.home).",
-          "morning_time": "Starttid för morgonläget. Ange i formatet TT:MM (t.ex. 06:00).",
+          "morning_time": "Starttid for morgonläget. Ange i formatet TT:MM (t.ex. 06:00).",
           "day_time": "Starttid för dagläget. Ange i formatet TT:MM (t.ex. 09:00).",
           "evening_time": "Starttid för kvällsläget. Ange i formatet TT:MM (t.ex. 20:00).",
           "night_time": "Starttid för nattläget. Ange i formatet TT:MM (t.ex. 23:00)."
@@ -39,6 +39,20 @@
           "day_time": "Starttid för dagläget. Ange i formatet TT:MM (t.ex. 09:00).",
           "evening_time": "Starttid för kvällsläget. Ange i formatet TT:MM (t.ex. 20:00).",
           "night_time": "Starttid för nattläget. Ange i formatet TT:MM (t.ex. 23:00)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_mode": {
+        "name": "Aktuellt läge",
+        "state": {
+          "away": "Borta",
+          "morning": "Morgon",
+          "day": "Dag",
+          "evening": "Kväll",
+          "night": "Natt"
         }
       }
     }
