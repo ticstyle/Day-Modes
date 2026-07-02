@@ -9,7 +9,6 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.data_entry_flow import FlowResult
-import homeassistant.helpers.config_validation as cv
 
 from .const import (
     DOMAIN,
@@ -28,7 +27,7 @@ from .const import (
 
 
 def get_schema(defaults: dict[str, Any]) -> vol.Schema:
-    """Return the configuration schema with dynamic defaults."""
+    """Return the configuration schema using clean text inputs for time."""
     return vol.Schema(
         {
             vol.Required(
@@ -37,18 +36,18 @@ def get_schema(defaults: dict[str, Any]) -> vol.Schema:
             vol.Required(
                 CONF_MORNING_TIME,
                 default=defaults.get(CONF_MORNING_TIME, DEFAULT_MORNING_TIME),
-            ): selector.TimeSelector(),
+            ): selector.TextSelector(),
             vol.Required(
                 CONF_DAY_TIME, default=defaults.get(CONF_DAY_TIME, DEFAULT_DAY_TIME)
-            ): selector.TimeSelector(),
+            ): selector.TextSelector(),
             vol.Required(
                 CONF_EVENING_TIME,
                 default=defaults.get(CONF_EVENING_TIME, DEFAULT_EVENING_TIME),
-            ): selector.TimeSelector(),
+            ): selector.TextSelector(),
             vol.Required(
                 CONF_NIGHT_TIME,
                 default=defaults.get(CONF_NIGHT_TIME, DEFAULT_NIGHT_TIME),
-            ): selector.TimeSelector(),
+            ): selector.TextSelector(),
         }
     )
 
@@ -65,7 +64,6 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            # We use the zone object ID or a friendly name as the unique key
             title = f"{DEFAULT_NAME} ({user_input[CONF_HOME_ZONE].split('.')[-1].title()})"
             return self.async_create_entry(
                 title=title, data=user_input, options=user_input
@@ -98,7 +96,6 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # Merge original data with current options as defaults
         current_settings = {**self.config_entry.data, **self.config_entry.options}
 
         return self.async_show_form(
