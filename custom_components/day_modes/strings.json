@@ -2,21 +2,21 @@
   "config": {
     "step": {
       "user": {
-        "title": "Day Modes Configuration",
-        "description": "Define your daily schedule thresholds and occupancy zone.",
+        "title": "Day Modes",
+        "description": "Configure your daily schedule. The sensor will automatically transition between these modes based on the time of day, provided someone is inside the tracked occupancy zone.",
         "data": {
           "home_zone": "Tracked Zone",
-          "morning_time": "Morning Mode",
-          "day_time": "Day Mode",
-          "evening_time": "Evening Mode",
-          "night_time": "Night Mode"
+          "morning_time": "Morning Mode Starts",
+          "day_time": "Day Mode Starts",
+          "evening_time": "Evening Mode Starts",
+          "night_time": "Night Mode Starts"
         },
         "data_description": {
-          "home_zone": "The zone used to determine family occupancy status (e.g., zone.home).",
-          "morning_time": "Start time for the morning state. Use HH:MM format (e.g., 06:00).",
-          "day_time": "Start time for the active day state. Use HH:MM format (e.g., 09:00).",
-          "evening_time": "Start time for the evening relaxation state. Use HH:MM format (e.g., 20:00).",
-          "night_time": "Start time for the night state. Use HH:MM format (e.g., 23:00)."
+          "home_zone": "The zone monitored for presence tracking (e.g., zone.home). If empty, 'Away' mode triggers instantly.",
+          "morning_time": "Format HH:MM (e.g., 06:00). Active when someone is home during this period.",
+          "day_time": "Format HH:MM (e.g., 09:00). Active when someone is home during this period.",
+          "evening_time": "Format HH:MM (e.g., 20:00). Active when someone is home during this period.",
+          "night_time": "Format HH:MM (e.g., 23:00). Active when someone is home during this period."
         }
       }
     }
@@ -24,21 +24,21 @@
   "options": {
     "step": {
       "init": {
-        "title": "Configure Day Mode Settings",
-        "description": "Adjust the time boundaries or change your tracked zone dynamic settings.",
+        "title": "Day Modes Configuration",
+        "description": "Adjust your schedule thresholds or change your monitored presence zone below. Changes apply instantly without losing historical data.",
         "data": {
           "home_zone": "Tracked Zone",
-          "morning_time": "Morning Mode",
-          "day_time": "Day Mode",
-          "evening_time": "Evening Mode",
-          "night_time": "Night Mode"
+          "morning_time": "Morning Mode Starts",
+          "day_time": "Day Mode Starts",
+          "evening_time": "Evening Mode Starts",
+          "night_time": "Night Mode Starts"
         },
         "data_description": {
-          "home_zone": "The zone used to determine family occupancy status (e.g., zone.home).",
-          "morning_time": "Start time for the morning state. Use HH:MM format (e.g., 06:00).",
-          "day_time": "Start time for the active day state. Use HH:MM format (e.g., 09:00).",
-          "evening_time": "Start time for the evening relaxation state. Use HH:MM format (e.g., 20:00).",
-          "night_time": "Start time for the night state. Use HH:MM format (e.g., 23:00)."
+          "home_zone": "The zone monitored for presence tracking (e.g., zone.home). If empty, 'Away' mode triggers instantly.",
+          "morning_time": "Format HH:MM (e.g., 06:00). Active when someone is home during this period.",
+          "day_time": "Format HH:MM (e.g., 09:00). Active when someone is home during this period.",
+          "evening_time": "Format HH:MM (e.g., 20:00). Active when someone is home during this period.",
+          "night_time": "Format HH:MM (e.g., 23:00). Active when someone is home during this period."
         }
       }
     }
