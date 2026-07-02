@@ -54,6 +54,18 @@
           "evening": "Evening",
           "night": "Night"
         }
+      },
+      "morning_time": {
+        "name": "Morning start time"
+      },
+      "day_time": {
+        "name": "Day start time"
+      },
+      "evening_time": {
+        "name": "Evening start time"
+      },
+      "night_time": {
+        "name": "Night start time"
       }
     }
   }
