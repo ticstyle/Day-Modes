@@ -76,7 +76,7 @@ async def async_setup_entry(
 class DayModesSensor(SensorEntity):
     """Representation of the core Day Mode State Sensor."""
 
-    _attr_icon = "mdi:clock-time-four-outline"
+    _attr_icon = "mdi:home-clock"
     _attr_has_entity_name = True
     _attr_translation_key = "current_mode"
 
@@ -207,7 +207,7 @@ class DayModesTimeSensor(SensorEntity):
         self._attr_device_info = device_info
         self._attr_native_value = config[config_key]
 
-        # Explicit English fallback names mapping
+        # Clean fallback names without numbered prefixes
         names = {
             CONF_MORNING_TIME: "Morning start time",
             CONF_DAY_TIME: "Day start time",
