@@ -6,18 +6,19 @@
 ![](https://img.shields.io/github/downloads/ticstyle/Day-Modes/total?style=for-the-badge&color=green)
 ![](https://img.shields.io/github/issues/ticstyle/Day-Modes?style=for-the-badge&color=orange)
 
-A modern Home Assistant custom integration that creates a dynamic sensor to automatically track and cycle through custom day modes (Morning, Day, Evening, Night, Away) based on your personalized schedule and zone occupancy.
+A modern Home Assistant custom integration that creates a dynamic device and sensor ecosystem to automatically track and cycle through custom day modes (Morning, Day, Evening, Night, Away) based on your personalized schedule and zone occupancy.
 
 To add this integration, please add the custom repository `https://github.com/ticstyle/Day-Modes` to HACS in your Home Assistant setup.
 
 ## 🌐 Supported Languages / Språk
-The integration natively defaults to English for the core backend but includes full frontend translations for Swedish. The Config Flow, Options Flow, and entity configurations will seamlessly match your user interface language.
+The integration natively defaults to English for backend operations but includes full frontend translations for Swedish. Thanks to native State Translations, state values will display localized text (e.g., *Morgon*, *Dag*, *Borta*) seamlessly in your UI while preserving standard raw values for backend tracking.
 
 ## ✨ Features
+* **Device-Centric Architecture:** Instead of creating loose, disconnected entities, the integration generates a clean **Day modes** Device container grouping all relevant cycle state and configuration data together.
+* **Granular Configuration Sensors:** Exposes 4 dedicated configuration entities showing your active time boundaries, making dashboard presentation effortless without advanced template coding.
 * **Dynamic Presence Tracking:** Automatically forces an `away` state whenever your designated home zone becomes empty, and instantly restores the correct time-based operational mode the second someone returns.
-* **On-the-Fly Reconfiguration:** Built with a full Options Flow. Easily change your scheduled morning, day, evening, or night times, or target a completely different zone at any point without needing to delete and recreate the entity.
-* **Rich Metadata Attributes:** Every sensor exposes its active time thresholds and tracked zone directly inside its state attributes, making it incredibly clean to cross-reference configuration states inside advanced templates.
-* **100% Async Engine:** Uses Home Assistant's event-driven architecture to subscribe to precise time changes and state triggers, ensuring zero unnecessary CPU polling cycles or blocking calls.
+* **On-the-Fly Reconfiguration:** Built with a full Options Flow. Easily adjust your scheduled times using a clean `HH:MM` interface or target a completely different zone at any point via the UI cogwheel.
+* **100% Async Engine:** Uses Home Assistant's event-driven architecture to subscribe to precise state and time changes, ensuring zero unnecessary CPU polling cycles.
 
 ## 🚀 Installation
 
@@ -32,31 +33,35 @@ Via [HACS](https://hacs.xyz/) or manually copy the `day_modes` folder from the [
 Add the integration via the Home Assistant User Interface. Go to **Settings -> Devices & Services -> Add Integration** and search for **Day modes**.
 
 ## 📊 Available Entities
-Regardless of your tracked zone name, the integration locks the primary state entity to a predictable, clean identity:
+Once configured, the integration automatically registers a device named **Day modes** containing the following 5 entities:
 
 | Entity ID | Name in UI | State Example | Description |
 | :--- | :--- | :--- | :--- |
-| `sensor.day_modes` | Day modes | `day` | Operational state tracking. Returns `morning`, `day`, `evening`, `night`, or `away`. |
+| `sensor.day_modes` | Current mode | `day` *(Dag)* | Core operational state tracking. Returns `morning`, `day`, `evening`, `night`, or `away`. |
+| `sensor.day_modes_morning_time` | Morning start time | `06:00` | Displays the currently configured start time for Morning mode. |
+| `sensor.day_modes_day_time` | Day start time | `09:00` | Displays the currently configured start time for Day mode. |
+| `sensor.day_modes_evening_time` | Evening start time | `20:00` | Displays the currently configured start time for Evening mode. |
+| `sensor.day_modes_night_time` | Night start time | `23:00` | Displays the currently configured start time for Night mode. |
 
 ### Entity Attributes
-The generated sensor explicitly exposes your active settings within its state attributes for easy UI mapping:
+The core state sensor (`sensor.day_modes`) also explicitly exposes your configuration matrix within its metadata attributes for backwards compatibility:
 * `tracked_zone`: The target zone entity being monitored (e.g., `zone.home`).
-* `morning_time`: Configured timestamp for the start of morning mode (e.g., `06:00:00`).
-* `day_time`: Configured timestamp for the start of day mode (e.g., `09:00:00`).
-* `evening_time`: Configured timestamp for the start of evening mode (e.g., `20:00:00`).
-* `night_time`: Configured timestamp for the start of night mode (e.g., `23:00:00`).
+* `morning_time`: Active string configuration for morning start (e.g., `06:00`).
+* `day_time`: Active string configuration for day start (e.g., `09:00`).
+* `evening_time`: Active string configuration for evening start (e.g., `20:00`).
+* `night_time`: Active string configuration for night start (e.g., `23:00`).
 
 ## 💡 Lovelace Dashboard Example
-Since the states are native string values, you can use standard entity cards, conditional cards, or clean markdown blocks to adapt your dashboard experience based on the house operational state:
+Because all setup parameters are now first-class entities, building an informative dashboard summary layout is dead simple and no longer requires nested attribute lookups:
 
 ```yaml
 type: markdown
 title: "House Status"
 content: >
-  Current House Mode: **{{ states('sensor.day_modes') | capitalize }}**
+  Current House Mode: **{{ states('sensor.day_modes') }}**
   
   {% if is_state('sensor.day_modes', 'away') %}
     🏠 The house is currently in eco-mode while everyone is out.
   {% else %}
-    ⏰ Tonight's night mode schedule is set to trigger at {{ state_attr('sensor.day_modes', 'night_time') }}.
+    ⏰ Tonight's night mode schedule is set to trigger at {{ states('sensor.day_modes_night_time') }}.
   {% endif %}
