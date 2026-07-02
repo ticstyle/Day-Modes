@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Skapa Day Mode-sensor",
+        "description": "Ställ in tidsintervaller och vilken hemzon som ska spåras för dina olika lägen.",
+        "data": {
+          "home_zone": "Hemzon",
+          "morning_time": "Morgon börjar kl",
+          "day_time": "Dag börjar kl",
+          "evening_time": "Kväll börjar kl",
+          "night_time": "Natt börjar kl"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurera Day Mode-sensor",
+        "description": "Justera tidsinställningar eller ändra den spårade zonen för denna sensor.",
+        "data": {
+          "home_zone": "Hemzon",
+          "morning_time": "Morgon börjar kl",
+          "day_time": "Dag börjar kl",
+          "evening_time": "Kväll börjar kl",
+          "night_time": "Natt börjar kl"
+        }
+      }
+    }
+  }
+}
