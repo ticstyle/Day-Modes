@@ -25,7 +25,7 @@ MODE_DAY = "day"
 MODE_EVENING = "evening"
 MODE_NIGHT = "night"
 
-# Weekday mapping matching Python's datetime.weekday()
+# Clean string mapping for internal weekday evaluations
 WEEKDAYS = {
     0: "monday",
     1: "tuesday",
