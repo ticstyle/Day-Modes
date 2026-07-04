@@ -67,15 +67,10 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
+            chosen_days = [int(d) for d in user_input.get("days", [])]
 
-            checked_days = [
-                d for d in self._remaining_days if user_input.get(f"day_{d}", False)
-            ]
-            unchecked_days = [
-                d
-                for d in self._remaining_days
-                if not user_input.get(f"day_{d}", False)
-            ]
+            checked_days = [d for d in self._remaining_days if d in chosen_days]
+            unchecked_days = [d for d in self._remaining_days if d not in chosen_days]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
@@ -111,10 +106,20 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone"))
         }
         schema_dict.update(get_time_schema({}))
-        for d in self._remaining_days:
-            schema_dict[vol.Required(f"day_{d}", default=True)] = (
-                selector.BooleanSelector()
+
+        # Combined compact multi-selection list block
+        schema_dict[
+            vol.Required("days", default=[str(d) for d in self._remaining_days])
+        ] = selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=[
+                    selector.SelectOptionDict(value=str(d))
+                    for d in self._remaining_days
+                ],
+                multiple=True,
+                mode=selector.SelectSelectorMode.LIST,
             )
+        )
 
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(schema_dict), errors=errors
@@ -132,13 +137,10 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 checked_days = list(self._remaining_days)
                 unchecked_days = []
             else:
-                checked_days = [
-                    d for d in self._remaining_days if user_input.get(f"day_{d}", False)
-                ]
+                chosen_days = [int(d) for d in user_input.get("days", [])]
+                checked_days = [d for d in self._remaining_days if d in chosen_days]
                 unchecked_days = [
-                    d
-                    for d in self._remaining_days
-                    if not user_input.get(f"day_{d}", False)
+                    d for d in self._remaining_days if d not in chosen_days
                 ]
 
             if not checked_days:
@@ -171,10 +173,18 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema_dict = get_time_schema({})
         if total_left > 1:
-            for d in self._remaining_days:
-                schema_dict[vol.Required(f"day_{d}", default=True)] = (
-                    selector.BooleanSelector()
+            schema_dict[
+                vol.Required("days", default=[str(d) for d in self._remaining_days])
+            ] = selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[
+                        selector.SelectOptionDict(value=str(d))
+                        for d in self._remaining_days
+                    ],
+                    multiple=True,
+                    mode=selector.SelectSelectorMode.LIST,
                 )
+            )
 
         return self.async_show_form(
             step_id="special", data_schema=vol.Schema(schema_dict), errors=errors
@@ -210,14 +220,10 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
-            checked_days = [
-                d for d in self._remaining_days if user_input.get(f"day_{d}", False)
-            ]
-            unchecked_days = [
-                d
-                for d in self._remaining_days
-                if not user_input.get(f"day_{d}", False)
-            ]
+            chosen_days = [int(d) for d in user_input.get("days", [])]
+
+            checked_days = [d for d in self._remaining_days if d in chosen_days]
+            unchecked_days = [d for d in self._remaining_days if d not in chosen_days]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
@@ -244,8 +250,9 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
                     )
                 return await self.async_step_special()
 
-        # Build defaults array matching step 1 parameters dynamically
         defaults = {CONF_HOME_ZONE: self._home_zone}
+        default_days = []
+
         if saved_schedules and len(saved_schedules) > self._step_index:
             active_profile = saved_schedules[self._step_index]
             defaults.update(
@@ -256,11 +263,13 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
                     CONF_NIGHT_TIME: active_profile.get(CONF_NIGHT_TIME),
                 }
             )
-            for d in range(7):
-                defaults[f"day_{d}"] = d in active_profile.get("days", [])
+            default_days = [
+                str(d)
+                for d in self._remaining_days
+                if d in active_profile.get("days", [])
+            ]
         else:
-            for d in range(7):
-                defaults[f"day_{d}"] = True
+            default_days = [str(d) for d in self._remaining_days]
 
         schema_dict = {
             vol.Required(
@@ -268,10 +277,18 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
             ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone"))
         }
         schema_dict.update(get_time_schema(defaults))
-        for d in self._remaining_days:
-            schema_dict[vol.Required(f"day_{d}", default=defaults[f"day_{d}"])] = (
-                selector.BooleanSelector()
+        schema_dict[vol.Required("days", default=default_days)] = (
+            selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[
+                        selector.SelectOptionDict(value=str(d))
+                        for d in self._remaining_days
+                    ],
+                    multiple=True,
+                    mode=selector.SelectSelectorMode.LIST,
+                )
             )
+        )
 
         return self.async_show_form(
             step_id="init", data_schema=vol.Schema(schema_dict), errors=errors
@@ -291,13 +308,10 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
                 checked_days = list(self._remaining_days)
                 unchecked_days = []
             else:
-                checked_days = [
-                    d for d in self._remaining_days if user_input.get(f"day_{d}", False)
-                ]
+                chosen_days = [int(d) for d in user_input.get("days", [])]
+                checked_days = [d for d in self._remaining_days if d in chosen_days]
                 unchecked_days = [
-                    d
-                    for d in self._remaining_days
-                    if not user_input.get(f"day_{d}", False)
+                    d for d in self._remaining_days if d not in chosen_days
                 ]
 
             if not checked_days:
@@ -325,8 +339,9 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
                     )
                 return await self.async_step_special()
 
-        # Build defaults for the sub-steps
         defaults = {}
+        default_days = []
+
         if saved_schedules and len(saved_schedules) > self._step_index:
             active_profile = saved_schedules[self._step_index]
             defaults.update(
@@ -337,18 +352,28 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
                     CONF_NIGHT_TIME: active_profile.get(CONF_NIGHT_TIME),
                 }
             )
-            for d in self._remaining_days:
-                defaults[f"day_{d}"] = d in active_profile.get("days", [])
+            default_days = [
+                str(d)
+                for d in self._remaining_days
+                if d in active_profile.get("days", [])
+            ]
         else:
-            for d in self._remaining_days:
-                defaults[f"day_{d}"] = True
+            default_days = [str(d) for d in self._remaining_days]
 
         schema_dict = get_time_schema(defaults)
         if total_left > 1:
-            for d in self._remaining_days:
-                schema_dict[
-                    vol.Required(f"day_{d}", default=defaults[f"day_{d}"])
-                ] = selector.BooleanSelector()
+            schema_dict[vol.Required("days", default=default_days)] = (
+                selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=[
+                            selector.SelectOptionDict(value=str(d))
+                            for d in self._remaining_days
+                        ],
+                        multiple=True,
+                        mode=selector.SelectSelectorMode.LIST,
+                    )
+                )
+            )
 
         return self.async_show_form(
             step_id="special", data_schema=vol.Schema(schema_dict), errors=errors
