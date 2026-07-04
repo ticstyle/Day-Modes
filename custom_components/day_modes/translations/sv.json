@@ -1,44 +1,84 @@
 {
   "config": {
+    "error": {
+      "select_at_least_one_day": "Du måste välja minst en veckodag för detta schema."
+    },
     "step": {
       "user": {
-        "title": "Day modes",
-        "description": "Konfigurera ditt dygns schema. Sensorn växlar automatiskt mellan dessa lägen baserat på klockslagen, så länge någon befinner sig inom den spårade zonen.",
+        "title": "Day modes - Standardschema",
+        "description": "Ställ in ditt huvudschema. Markera de dagar som ska använda dessa tider. Lämna dagar tomma om du vill ge dem unika specialtider i nästa steg.",
         "data": {
           "home_zone": "Spårad zon",
           "morning_time": "Morgonläge börjar",
           "day_time": "Dagläge börjar",
           "evening_time": "Kvällsläge börjar",
-          "night_time": "Nattläge börjar"
-        },
-        "data_description": {
-          "home_zone": "Zonen som övervakas för närvaro (t.ex. zone.home). Om zonen är tom aktiveras läget 'Borta' omedelbart.",
-          "morning_time": "Ange som TT:MM (t.ex. 06:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "day_time": "Ange som TT:MM (t.ex. 09:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "evening_time": "Ange som TT:MM (t.ex. 20:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "night_time": "Ange som TT:MM (t.ex. 23:00). Aktivt när någon är hemma under detta tidsintervall."
+          "night_time": "Nattläge börjar",
+          "day_0": "Gäll för måndagar",
+          "day_1": "Gäll för tisdagar",
+          "day_2": "Gäll för onsdagar",
+          "day_3": "Gäll för torsdagar",
+          "day_4": "Gäll för fredagar",
+          "day_5": "Gäll för lördagar",
+          "day_6": "Gäll för söndagar"
+        }
+      },
+      "special": {
+        "title": "Day modes - Specialschema",
+        "description": "Konfigurera tiderna för de återstående dagarna som lämnades tomma: {days}",
+        "data": {
+          "morning_time": "Morgonläge börjar",
+          "day_time": "Dagläge börjar",
+          "evening_time": "Kvällsläge börjar",
+          "night_time": "Nattläge börjar",
+          "day_0": "Gäll för måndagar",
+          "day_1": "Gäll för tisdagar",
+          "day_2": "Gäll för onsdagar",
+          "day_3": "Gäll för torsdagar",
+          "day_4": "Gäll för fredagar",
+          "day_5": "Gäll för lördagar",
+          "day_6": "Gäll för söndagar"
         }
       }
     }
   },
   "options": {
+    "error": {
+      "select_at_least_one_day": "Du måste välja minst en veckodag för detta schema."
+    },
     "step": {
       "init": {
-        "title": "Inställningar för Day modes",
-        "description": "Justera dina tidsgränser eller byt ut vilken zon som ska övervakas. Ändringarna verkställs direkt utan att du tappar historik.",
+        "title": "Ändra inställningar för Day modes",
+        "description": "Justera dina tidsmatriser. Specificera vilka dagar som ska använda detta basschema.",
         "data": {
           "home_zone": "Spårad zon",
           "morning_time": "Morgonläge börjar",
           "day_time": "Dagläge börjar",
           "evening_time": "Kvällsläge börjar",
-          "night_time": "Nattläge börjar"
-        },
-        "data_description": {
-          "home_zone": "Zonen som övervakas för närvaro (t.ex. zone.home). Om zonen är tom aktiveras läget 'Borta' omedelbart.",
-          "morning_time": "Ange som TT:MM (t.ex. 06:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "day_time": "Ange som TT:MM (t.ex. 09:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "evening_time": "Ange som TT:MM (t.ex. 20:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "night_time": "Ange som TT:MM (t.ex. 23:00). Aktivt när någon är hemma under detta tidsintervall."
+          "night_time": "Nattläge börjar",
+          "day_0": "Gäll för måndagar",
+          "day_1": "Gäll för tisdagar",
+          "day_2": "Gäll för onsdagar",
+          "day_3": "Gäll för torsdagar",
+          "day_4": "Gäll för fredagar",
+          "day_5": "Gäll för lördagar",
+          "day_6": "Gäll för söndagar"
+        }
+      },
+      "special": {
+        "title": "Ändra inställningar för specialschema",
+        "description": "Justera inställningarna för de återstående unika dagarna: {days}",
+        "data": {
+          "morning_time": "Morgonläge börjar",
+          "day_time": "Dagläge börjar",
+          "evening_time": "Kvällsläge börjar",
+          "night_time": "Nattläge börjar",
+          "day_0": "Gäll för måndagar",
+          "day_1": "Gäll för tisdagar",
+          "day_2": "Gäll för onsdagar",
+          "day_3": "Gäll för torsdagar",
+          "day_4": "Gäll för fredagar",
+          "day_5": "Gäll för lördagar",
+          "day_6": "Gäll för söndagar"
         }
       }
     }
