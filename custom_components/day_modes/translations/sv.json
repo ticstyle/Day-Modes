@@ -24,7 +24,7 @@
       },
       "special": {
         "title": "Day modes - Specialschema",
-        "description": "Konfigurera tiderna för de återstående dagarna som lämnades tomma: {days}",
+        "description": "Konfigurera tiderna för de återstående dagarna nedan. Bocka ur dagar om du vill dela upp dem i ytterligare en unik profil.",
         "data": {
           "morning_time": "Morgonläge börjar",
           "day_time": "Dagläge börjar",
@@ -66,7 +66,7 @@
       },
       "special": {
         "title": "Ändra inställningar för specialschema",
-        "description": "Justera inställningarna för de återstående unika dagarna: {days}",
+        "description": "Justera inställningarna för de återstående unika dagarna nedan.",
         "data": {
           "morning_time": "Morgonläge börjar",
           "day_time": "Dagläge börjar",
