@@ -13,30 +13,18 @@
           "day_time": "Dagläge börjar",
           "evening_time": "Kvällsläge börjar",
           "night_time": "Nattläge börjar",
-          "day_0": "Gäll för måndagar",
-          "day_1": "Gäll för tisdagar",
-          "day_2": "Gäll för onsdagar",
-          "day_3": "Gäll för torsdagar",
-          "day_4": "Gäll för fredagar",
-          "day_5": "Gäll för lördagar",
-          "day_6": "Gäll för söndagar"
+          "days": "Aktiva dagar"
         }
       },
       "special": {
         "title": "Day modes - Specialschema",
-        "description": "Konfigurera tiderna för de återstående dagarna nedan. Bocka ur dagar om du vill dela upp dem i ytterligare en unik profil.",
+        "description": "Konfigurera tiderna för de återstående dagarna nedan.",
         "data": {
           "morning_time": "Morgonläge börjar",
           "day_time": "Dagläge börjar",
           "evening_time": "Kvällsläge börjar",
           "night_time": "Nattläge börjar",
-          "day_0": "Gäll för måndagar",
-          "day_1": "Gäll för tisdagar",
-          "day_2": "Gäll för onsdagar",
-          "day_3": "Gäll för torsdagar",
-          "day_4": "Gäll för fredagar",
-          "day_5": "Gäll för lördagar",
-          "day_6": "Gäll för söndagar"
+          "days": "Aktiva dagar"
         }
       }
     }
@@ -47,7 +35,7 @@
     },
     "step": {
       "init": {
-        "title": "Ändra inställningar för Day modes",
+        "title": "Ändra inställningar for Day modes",
         "description": "Justera dina tidsmatriser. Specificera vilka dagar som ska använda detta basschema.",
         "data": {
           "home_zone": "Spårad zon",
@@ -55,13 +43,7 @@
           "day_time": "Dagläge börjar",
           "evening_time": "Kvällsläge börjar",
           "night_time": "Nattläge börjar",
-          "day_0": "Gäll för måndagar",
-          "day_1": "Gäll för tisdagar",
-          "day_2": "Gäll för onsdagar",
-          "day_3": "Gäll för torsdagar",
-          "day_4": "Gäll för fredagar",
-          "day_5": "Gäll för lördagar",
-          "day_6": "Gäll för söndagar"
+          "days": "Aktiva dagar"
         }
       },
       "special": {
@@ -72,13 +54,7 @@
           "day_time": "Dagläge börjar",
           "evening_time": "Kvällsläge börjar",
           "night_time": "Nattläge börjar",
-          "day_0": "Gäll för måndagar",
-          "day_1": "Gäll för tisdagar",
-          "day_2": "Gäll för onsdagar",
-          "day_3": "Gäll för torsdagar",
-          "day_4": "Gäll för fredagar",
-          "day_5": "Gäll för lördagar",
-          "day_6": "Gäll för söndagar"
+          "days": "Aktiva dagar"
         }
       }
     }
@@ -106,6 +82,19 @@
       },
       "night_time": {
         "name": "Starttid för natt"
+      }
+    }
+  },
+  "selector": {
+    "days": {
+      "options": {
+        "0": "Måndag",
+        "1": "Tisdag",
+        "2": "Onsdag",
+        "3": "Torsdag",
+        "4": "Fredag",
+        "5": "Lördag",
+        "6": "Söndag"
       }
     }
   }
