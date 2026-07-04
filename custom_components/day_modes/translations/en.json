@@ -1,0 +1,112 @@
+{
+  "config": {
+    "error": {
+      "select_at_least_one_day": "You must select at least one day for this schedule profile."
+    },
+    "step": {
+      "user": {
+        "title": "Day modes - Base Schedule",
+        "description": "Configure your main schedule times. Check the checkboxes for the days this profile applies to. Leave days unchecked to give them unique special schedules next.",
+        "data": {
+          "home_zone": "Tracked Zone",
+          "morning_time": "Morning Mode Starts",
+          "day_time": "Day Mode Starts",
+          "evening_time": "Evening Mode Starts",
+          "night_time": "Night Mode Starts",
+          "day_0": "Apply to Monday",
+          "day_1": "Apply to Tuesday",
+          "day_2": "Apply to Wednesday",
+          "day_3": "Apply to Thursday",
+          "day_4": "Apply to Friday",
+          "day_5": "Apply to Saturday",
+          "day_6": "Apply to Sunday"
+        }
+      },
+      "special": {
+        "title": "Day modes - Custom Schedule",
+        "description": "Configure the time variables for the remaining unassigned weekdays below. Uncheck days to split them into a separate profile.",
+        "data": {
+          "morning_time": "Morning Mode Starts",
+          "day_time": "Day Mode Starts",
+          "evening_time": "Evening Mode Starts",
+          "night_time": "Night Mode Starts",
+          "day_0": "Apply to Monday",
+          "day_1": "Apply to Tuesday",
+          "day_2": "Apply to Wednesday",
+          "day_3": "Apply to Thursday",
+          "day_4": "Apply to Friday",
+          "day_5": "Apply to Saturday",
+          "day_6": "Apply to Sunday"
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "select_at_least_one_day": "You must select at least one day for this schedule profile."
+    },
+    "step": {
+      "init": {
+        "title": "Reconfigure Day Modes",
+        "description": "Adjust your time matrices. Specify which days should use this baseline configuration profile.",
+        "data": {
+          "home_zone": "Tracked Zone",
+          "morning_time": "Morning Mode Starts",
+          "day_time": "Day Mode Starts",
+          "evening_time": "Evening Mode Starts",
+          "night_time": "Night Mode Starts",
+          "day_0": "Apply to Monday",
+          "day_1": "Apply to Tuesday",
+          "day_2": "Apply to Wednesday",
+          "day_3": "Apply to Thursday",
+          "day_4": "Apply to Friday",
+          "day_5": "Apply to Saturday",
+          "day_6": "Apply to Sunday"
+        }
+      },
+      "special": {
+        "title": "Reconfigure Special Schedule",
+        "description": "Adjust setup times for the remaining isolated days below.",
+        "data": {
+          "morning_time": "Morning Mode Starts",
+          "day_time": "Day Mode Starts",
+          "evening_time": "Evening Mode Starts",
+          "night_time": "Night Mode Starts",
+          "day_0": "Apply to Monday",
+          "day_1": "Apply to Tuesday",
+          "day_2": "Apply to Wednesday",
+          "day_3": "Apply to Thursday",
+          "day_4": "Apply to Friday",
+          "day_5": "Apply to Saturday",
+          "day_6": "Apply to Sunday"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_mode": {
+        "name": "Current mode",
+        "state": {
+          "away": "Away",
+          "morning": "Morning",
+          "day": "Day",
+          "evening": "Evening",
+          "night": "Night"
+        }
+      },
+      "morning_time": {
+        "name": "Morning start time"
+      },
+      "day_time": {
+        "name": "Day start time"
+      },
+      "evening_time": {
+        "name": "Evening start time"
+      },
+      "night_time": {
+        "name": "Night start time"
+      }
+    }
+  }
+}
