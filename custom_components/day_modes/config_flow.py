@@ -26,6 +26,26 @@ from .const import (
     CONF_SCHEDULES,
 )
 
+WEEKDAYS_EN = {
+    0: "Monday",
+    1: "Tuesday",
+    2: "Wednesday",
+    3: "Thursday",
+    4: "Friday",
+    5: "Saturday",
+    6: "Sunday",
+}
+
+WEEKDAYS_SV = {
+    0: "Måndag",
+    1: "Tisdag",
+    2: "Onsdag",
+    3: "Torsdag",
+    4: "Fredag",
+    5: "Lördag",
+    6: "Söndag",
+}
+
 
 def get_time_schema(defaults: dict[str, Any]) -> dict[vol.Marker, Any]:
     """Return the baseline time selectors populated with accurate defaults."""
@@ -64,6 +84,8 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Step 1: Configure home zone, default schedule, and select initial days."""
         errors: dict[str, str] = {}
+        lang = "sv" if self.hass.config.language == "sv" else "en"
+        day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
@@ -107,12 +129,15 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         }
         schema_dict.update(get_time_schema({}))
 
-        # Pure string lists prevent JSON serialization issues completely
+        # Build inline translated dictionaries to fully bypass HACS caching bugs
         schema_dict[
             vol.Required("days", default=[str(d) for d in self._remaining_days])
         ] = selector.SelectSelector(
             selector.SelectSelectorConfig(
-                options=[str(d) for d in self._remaining_days],
+                options=[
+                    {"value": str(d), "label": day_map[d]}
+                    for d in self._remaining_days
+                ],
                 multiple=True,
                 mode=selector.SelectSelectorMode.LIST,
             )
@@ -128,6 +153,8 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Step 2 & onwards: Recursively isolate remaining unconfigured weekdays."""
         errors: dict[str, str] = {}
         total_left = len(self._remaining_days)
+        lang = "sv" if self.hass.config.language == "sv" else "en"
+        day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
             if total_left == 1:
@@ -174,14 +201,23 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("days", default=[str(d) for d in self._remaining_days])
             ] = selector.SelectSelector(
                 selector.SelectSelectorConfig(
-                    options=[str(d) for d in self._remaining_days],
+                    options=[
+                        {"value": str(d), "label": day_map[d]}
+                        for d in self._remaining_days
+                    ],
                     multiple=True,
                     mode=selector.SelectSelectorMode.LIST,
                 )
             )
 
+        # Generate the list of remaining days for the context description block
+        remaining_days_str = ", ".join([day_map[d] for d in self._remaining_days])
+
         return self.async_show_form(
-            step_id="special", data_schema=vol.Schema(schema_dict), errors=errors
+            step_id="special",
+            data_schema=vol.Schema(schema_dict),
+            description_placeholders={"remaining_days": remaining_days_str},
+            errors=errors,
         )
 
     @staticmethod
@@ -211,6 +247,8 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         current_config = {**self.config_entry.data, **self.config_entry.options}
         self._home_zone = current_config.get(CONF_HOME_ZONE, DEFAULT_ZONE)
         saved_schedules = current_config.get(CONF_SCHEDULES, [])
+        lang = "sv" if self.hass.config.language == "sv" else "en"
+        day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
@@ -274,7 +312,10 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         schema_dict[vol.Required("days", default=default_days)] = (
             selector.SelectSelector(
                 selector.SelectSelectorConfig(
-                    options=[str(d) for d in self._remaining_days],
+                    options=[
+                        {"value": str(d), "label": day_map[d]}
+                        for d in self._remaining_days
+                    ],
                     multiple=True,
                     mode=selector.SelectSelectorMode.LIST,
                 )
@@ -293,6 +334,8 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         total_left = len(self._remaining_days)
         current_config = {**self.config_entry.data, **self.config_entry.options}
         saved_schedules = current_config.get(CONF_SCHEDULES, [])
+        lang = "sv" if self.hass.config.language == "sv" else "en"
+        day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
             if total_left == 1:
@@ -356,13 +399,21 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
             schema_dict[vol.Required("days", default=default_days)] = (
                 selector.SelectSelector(
                     selector.SelectSelectorConfig(
-                        options=[str(d) for d in self._remaining_days],
+                        options=[
+                            {"value": str(d), "label": day_map[d]}
+                            for d in self._remaining_days
+                        ],
                         multiple=True,
                         mode=selector.SelectSelectorMode.LIST,
                     )
                 )
             )
 
+        remaining_days_str = ", ".join([day_map[d] for d in self._remaining_days])
+
         return self.async_show_form(
-            step_id="special", data_schema=vol.Schema(schema_dict), errors=errors
+            step_id="special",
+            data_schema=vol.Schema(schema_dict),
+            description_placeholders={"remaining_days": remaining_days_str},
+            errors=errors,
         )
