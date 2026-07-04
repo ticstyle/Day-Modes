@@ -6,37 +6,25 @@
     "step": {
       "user": {
         "title": "Day modes - Base Schedule",
-        "description": "Configure your main schedule times. Check the checkboxes for the days this profile applies to. Leave days unchecked to give them unique special schedules next.",
+        "description": "Configure your main schedule times. Select the days this profile applies to. Leave days unselected to split them into a custom schedule next.",
         "data": {
           "home_zone": "Tracked Zone",
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
           "night_time": "Night Mode Starts",
-          "day_0": "Apply to Monday",
-          "day_1": "Apply to Tuesday",
-          "day_2": "Apply to Wednesday",
-          "day_3": "Apply to Thursday",
-          "day_4": "Apply to Friday",
-          "day_5": "Apply to Saturday",
-          "day_6": "Apply to Sunday"
+          "days": "Active Days"
         }
       },
       "special": {
         "title": "Day modes - Custom Schedule",
-        "description": "Configure the time variables for the remaining unassigned weekdays below. Uncheck days to split them into a separate profile.",
+        "description": "Configure the time variables for the remaining unassigned weekdays below.",
         "data": {
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
           "night_time": "Night Mode Starts",
-          "day_0": "Apply to Monday",
-          "day_1": "Apply to Tuesday",
-          "day_2": "Apply to Wednesday",
-          "day_3": "Apply to Thursday",
-          "day_4": "Apply to Friday",
-          "day_5": "Apply to Saturday",
-          "day_6": "Apply to Sunday"
+          "days": "Active Days"
         }
       }
     }
@@ -55,13 +43,7 @@
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
           "night_time": "Night Mode Starts",
-          "day_0": "Apply to Monday",
-          "day_1": "Apply to Tuesday",
-          "day_2": "Apply to Wednesday",
-          "day_3": "Apply to Thursday",
-          "day_4": "Apply to Friday",
-          "day_5": "Apply to Saturday",
-          "day_6": "Apply to Sunday"
+          "days": "Active Days"
         }
       },
       "special": {
@@ -72,13 +54,7 @@
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
           "night_time": "Night Mode Starts",
-          "day_0": "Apply to Monday",
-          "day_1": "Apply to Tuesday",
-          "day_2": "Apply to Wednesday",
-          "day_3": "Apply to Thursday",
-          "day_4": "Apply to Friday",
-          "day_5": "Apply to Saturday",
-          "day_6": "Apply to Sunday"
+          "days": "Active Days"
         }
       }
     }
@@ -106,6 +82,19 @@
       },
       "night_time": {
         "name": "Night start time"
+      }
+    }
+  },
+  "selector": {
+    "days": {
+      "options": {
+        "0": "Monday",
+        "1": "Tuesday",
+        "2": "Wednesday",
+        "3": "Thursday",
+        "4": "Friday",
+        "5": "Saturday",
+        "6": "Sunday"
       }
     }
   }
