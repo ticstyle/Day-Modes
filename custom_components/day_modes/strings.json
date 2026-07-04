@@ -13,18 +13,18 @@
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
           "night_time": "Night Mode Starts",
-          "days": "Active Days"
+          "days": "Active for these days"
         }
       },
       "special": {
         "title": "Day Modes - Custom Schedule",
-        "description": "Configure the time variables for the remaining unassigned weekdays below.",
+        "description": "Configure the time variables for the remaining unassigned weekdays: {remaining_days}. Uncheck days to split them into a separate profile.",
         "data": {
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
           "night_time": "Night Mode Starts",
-          "days": "Active Days"
+          "days": "Active for these days"
         }
       }
     }
@@ -43,18 +43,18 @@
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
           "night_time": "Night Mode Starts",
-          "days": "Active Days"
+          "days": "Active for these days"
         }
       },
       "special": {
         "title": "Reconfigure Special Schedule",
-        "description": "Adjust setup times for the remaining isolated days below.",
+        "description": "Adjust setup times for the remaining isolated days: {remaining_days}",
         "data": {
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
           "night_time": "Night Mode Starts",
-          "days": "Active Days"
+          "days": "Active for these days"
         }
       }
     }
@@ -82,19 +82,6 @@
       },
       "night_time": {
         "name": "Night start time"
-      }
-    }
-  },
-  "selector": {
-    "days": {
-      "options": {
-        "0": "Monday",
-        "1": "Tuesday",
-        "2": "Wednesday",
-        "3": "Thursday",
-        "4": "Friday",
-        "5": "Saturday",
-        "6": "Sunday"
       }
     }
   }
