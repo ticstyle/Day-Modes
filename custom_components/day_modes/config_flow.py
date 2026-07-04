@@ -129,7 +129,6 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         }
         schema_dict.update(get_time_schema({}))
 
-        # Build inline translated dictionaries to fully bypass HACS caching bugs
         schema_dict[
             vol.Required("days", default=[str(d) for d in self._remaining_days])
         ] = selector.SelectSelector(
@@ -150,22 +149,17 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_special(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Step 2 & onwards: Recursively isolate remaining unconfigured weekdays."""
+        """Step 2 & onwards: Recursively isolate remaining weekdays including the final day."""
         errors: dict[str, str] = {}
-        total_left = len(self._remaining_days)
         lang = "sv" if self.hass.config.language == "sv" else "en"
         day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
-            if total_left == 1:
-                checked_days = list(self._remaining_days)
-                unchecked_days = []
-            else:
-                chosen_days = [int(d) for d in user_input.get("days", [])]
-                checked_days = [d for d in self._remaining_days if d in chosen_days]
-                unchecked_days = [
-                    d for d in self._remaining_days if d not in chosen_days
-                ]
+            chosen_days = [int(d) for d in user_input.get("days", [])]
+            checked_days = [d for d in self._remaining_days if d in chosen_days]
+            unchecked_days = [
+                d for d in self._remaining_days if d not in chosen_days
+            ]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
@@ -195,22 +189,21 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 return await self.async_step_special()
 
+        # The day selection box is now rendered unconditionally, even for the last day
         schema_dict = get_time_schema({})
-        if total_left > 1:
-            schema_dict[
-                vol.Required("days", default=[str(d) for d in self._remaining_days])
-            ] = selector.SelectSelector(
-                selector.SelectSelectorConfig(
-                    options=[
-                        {"value": str(d), "label": day_map[d]}
-                        for d in self._remaining_days
-                    ],
-                    multiple=True,
-                    mode=selector.SelectSelectorMode.LIST,
-                )
+        schema_dict[
+            vol.Required("days", default=[str(d) for d in self._remaining_days])
+        ] = selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=[
+                    {"value": str(d), "label": day_map[d]}
+                    for d in self._remaining_days
+                ],
+                multiple=True,
+                mode=selector.SelectSelectorMode.LIST,
             )
+        )
 
-        # Generate the list of remaining days for the context description block
         remaining_days_str = ", ".join([day_map[d] for d in self._remaining_days])
 
         return self.async_show_form(
@@ -329,24 +322,19 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_special(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Recursively process remaining days maintaining stored form attributes."""
+        """Recursively process remaining days maintaining option constraints."""
         errors: dict[str, str] = {}
-        total_left = len(self._remaining_days)
         current_config = {**self.config_entry.data, **self.config_entry.options}
         saved_schedules = current_config.get(CONF_SCHEDULES, [])
         lang = "sv" if self.hass.config.language == "sv" else "en"
         day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
-            if total_left == 1:
-                checked_days = list(self._remaining_days)
-                unchecked_days = []
-            else:
-                chosen_days = [int(d) for d in user_input.get("days", [])]
-                checked_days = [d for d in self._remaining_days if d in chosen_days]
-                unchecked_days = [
-                    d for d in self._remaining_days if d not in chosen_days
-                ]
+            chosen_days = [int(d) for d in user_input.get("days", [])]
+            checked_days = [d for d in self._remaining_days if d in chosen_days]
+            unchecked_days = [
+                d for d in self._remaining_days if d not in chosen_days
+            ]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
@@ -395,19 +383,18 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
             default_days = [str(d) for d in self._remaining_days]
 
         schema_dict = get_time_schema(defaults)
-        if total_left > 1:
-            schema_dict[vol.Required("days", default=default_days)] = (
-                selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        options=[
-                            {"value": str(d), "label": day_map[d]}
-                            for d in self._remaining_days
-                        ],
-                        multiple=True,
-                        mode=selector.SelectSelectorMode.LIST,
-                    )
+        schema_dict[vol.Required("days", default=default_days)] = (
+            selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[
+                        {"value": str(d), "label": day_map[d]}
+                        for d in self._remaining_days
+                    ],
+                    multiple=True,
+                    mode=selector.SelectSelectorMode.LIST,
                 )
             )
+        )
 
         remaining_days_str = ", ".join([day_map[d] for d in self._remaining_days])
 
