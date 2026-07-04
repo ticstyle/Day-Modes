@@ -24,12 +24,11 @@ from .const import (
     CONF_EVENING_TIME,
     CONF_NIGHT_TIME,
     CONF_SCHEDULES,
-    WEEKDAYS,
 )
 
 
 def get_time_schema(defaults: dict[str, Any]) -> dict[vol.Marker, Any]:
-    """Return the baseline time selectors used across all wizard steps."""
+    """Return the baseline time selectors populated with accurate defaults."""
     return {
         vol.Required(
             CONF_MORNING_TIME,
@@ -43,7 +42,8 @@ def get_time_schema(defaults: dict[str, Any]) -> dict[vol.Marker, Any]:
             default=defaults.get(CONF_EVENING_TIME, DEFAULT_EVENING_TIME),
         ): selector.TextSelector(),
         vol.Required(
-            CONF_NIGHT_TIME, default=defaults.get(CONF_NIGHT_TIME, DEFAULT_NIGHT_TIME)
+            CONF_NIGHT_TIME,
+            default=defaults.get(CONF_NIGHT_TIME, DEFAULT_NIGHT_TIME),
         ): selector.TextSelector(),
     }
 
@@ -68,39 +68,53 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
 
-            # Separate chosen days from deferred days
-            checked_days = [d for d in self._remaining_days if user_input.get(f"day_{d}", False)]
-            unchecked_days = [d for d in self._remaining_days if not user_input.get(f"day_{d}", False)]
+            checked_days = [
+                d for d in self._remaining_days if user_input.get(f"day_{d}", False)
+            ]
+            unchecked_days = [
+                d
+                for d in self._remaining_days
+                if not user_input.get(f"day_{d}", False)
+            ]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
             else:
-                self._schedules.append({
-                    "days": checked_days,
-                    CONF_MORNING_TIME: user_input[CONF_MORNING_TIME],
-                    CONF_DAY_TIME: user_input[CONF_DAY_TIME],
-                    CONF_EVENING_TIME: user_input[CONF_EVENING_TIME],
-                    CONF_NIGHT_TIME: user_input[CONF_NIGHT_TIME],
-                })
+                self._schedules.append(
+                    {
+                        "days": checked_days,
+                        CONF_MORNING_TIME: user_input[CONF_MORNING_TIME],
+                        CONF_DAY_TIME: user_input[CONF_DAY_TIME],
+                        CONF_EVENING_TIME: user_input[CONF_EVENING_TIME],
+                        CONF_NIGHT_TIME: user_input[CONF_NIGHT_TIME],
+                    }
+                )
                 self._remaining_days = unchecked_days
 
                 if not self._remaining_days:
                     return self.async_create_entry(
                         title=f"{DEFAULT_NAME} ({self._home_zone.split('.')[-1].title()})",
-                        data={CONF_HOME_ZONE: self._home_zone, CONF_SCHEDULES: self._schedules},
-                        options={CONF_HOME_ZONE: self._home_zone, CONF_SCHEDULES: self._schedules},
+                        data={
+                            CONF_HOME_ZONE: self._home_zone,
+                            CONF_SCHEDULES: self._schedules,
+                        },
+                        options={
+                            CONF_HOME_ZONE: self._home_zone,
+                            CONF_SCHEDULES: self._schedules,
+                        },
                     )
                 return await self.async_step_special()
 
-        # Build schema showing all 7 days as default checked boxes
         schema_dict = {
-            vol.Required(CONF_HOME_ZONE, default=self._home_zone): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="zone")
-            )
+            vol.Required(
+                CONF_HOME_ZONE, default=self._home_zone
+            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone"))
         }
         schema_dict.update(get_time_schema({}))
         for d in self._remaining_days:
-            schema_dict[vol.Required(f"day_{d}", default=True)] = selector.BooleanSelector()
+            schema_dict[vol.Required(f"day_{d}", default=True)] = (
+                selector.BooleanSelector()
+            )
 
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(schema_dict), errors=errors
@@ -118,44 +132,52 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 checked_days = list(self._remaining_days)
                 unchecked_days = []
             else:
-                checked_days = [d for d in self._remaining_days if user_input.get(f"day_{d}", False)]
-                unchecked_days = [d for d in self._remaining_days if not user_input.get(f"day_{d}", False)]
+                checked_days = [
+                    d for d in self._remaining_days if user_input.get(f"day_{d}", False)
+                ]
+                unchecked_days = [
+                    d
+                    for d in self._remaining_days
+                    if not user_input.get(f"day_{d}", False)
+                ]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
             else:
-                self._schedules.append({
-                    "days": checked_days,
-                    CONF_MORNING_TIME: user_input[CONF_MORNING_TIME],
-                    CONF_DAY_TIME: user_input[CONF_DAY_TIME],
-                    CONF_EVENING_TIME: user_input[CONF_EVENING_TIME],
-                    CONF_NIGHT_TIME: user_input[CONF_NIGHT_TIME],
-                })
+                self._schedules.append(
+                    {
+                        "days": checked_days,
+                        CONF_MORNING_TIME: user_input[CONF_MORNING_TIME],
+                        CONF_DAY_TIME: user_input[CONF_DAY_TIME],
+                        CONF_EVENING_TIME: user_input[CONF_EVENING_TIME],
+                        CONF_NIGHT_TIME: user_input[CONF_NIGHT_TIME],
+                    }
+                )
                 self._remaining_days = unchecked_days
 
                 if not self._remaining_days:
                     return self.async_create_entry(
                         title=f"{DEFAULT_NAME} ({self._home_zone.split('.')[-1].title()})",
-                        data={CONF_HOME_ZONE: self._home_zone, CONF_SCHEDULES: self._schedules},
-                        options={CONF_HOME_ZONE: self._home_zone, CONF_SCHEDULES: self._schedules},
+                        data={
+                            CONF_HOME_ZONE: self._home_zone,
+                            CONF_SCHEDULES: self._schedules,
+                        },
+                        options={
+                            CONF_HOME_ZONE: self._home_zone,
+                            CONF_SCHEDULES: self._schedules,
+                        },
                     )
                 return await self.async_step_special()
 
-        # Generate schema tailored only to what days are left
         schema_dict = get_time_schema({})
         if total_left > 1:
             for d in self._remaining_days:
-                schema_dict[vol.Required(f"day_{d}", default=True)] = selector.BooleanSelector()
-
-        # Compile dynamic lists for frontend UI translation placeholders
-        day_names = [f"{{{{day_{d}}}}}" for d in self._remaining_days]
-        placeholders = {"days": ", ".join(day_names)}
+                schema_dict[vol.Required(f"day_{d}", default=True)] = (
+                    selector.BooleanSelector()
+                )
 
         return self.async_show_form(
-            step_id="special",
-            data_schema=vol.Schema(schema_dict),
-            description_placeholders=placeholders,
-            errors=errors,
+            step_id="special", data_schema=vol.Schema(schema_dict), errors=errors
         )
 
     @staticmethod
@@ -168,54 +190,88 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle options flow changes mirroring the main dynamic setup logic."""
+    """Handle options flow changes extracting active historical datasets."""
 
     def __init__(self) -> None:
         """Initialize options multi-step state trackers."""
         self._schedules: list[dict[str, Any]] = []
         self._remaining_days: list[int] = [0, 1, 2, 3, 4, 5, 6]
+        self._step_index = 0
+        self._home_zone = DEFAULT_ZONE
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Initialize the reconfiguration wizard."""
+        """Initialize the reconfiguration wizard populating stored matrixes."""
         errors: dict[str, str] = {}
-        current_zone = self.config_entry.options.get(
-            CONF_HOME_ZONE, self.config_entry.data.get(CONF_HOME_ZONE, DEFAULT_ZONE)
-        )
+        current_config = {**self.config_entry.data, **self.config_entry.options}
+        self._home_zone = current_config.get(CONF_HOME_ZONE, DEFAULT_ZONE)
+        saved_schedules = current_config.get(CONF_SCHEDULES, [])
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
-            checked_days = [d for d in self._remaining_days if user_input.get(f"day_{d}", False)]
-            unchecked_days = [d for d in self._remaining_days if not user_input.get(f"day_{d}", False)]
+            checked_days = [
+                d for d in self._remaining_days if user_input.get(f"day_{d}", False)
+            ]
+            unchecked_days = [
+                d
+                for d in self._remaining_days
+                if not user_input.get(f"day_{d}", False)
+            ]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
             else:
-                self._schedules.append({
-                    "days": checked_days,
-                    CONF_MORNING_TIME: user_input[CONF_MORNING_TIME],
-                    CONF_DAY_TIME: user_input[CONF_DAY_TIME],
-                    CONF_EVENING_TIME: user_input[CONF_EVENING_TIME],
-                    CONF_NIGHT_TIME: user_input[CONF_NIGHT_TIME],
-                })
+                self._schedules.append(
+                    {
+                        "days": checked_days,
+                        CONF_MORNING_TIME: user_input[CONF_MORNING_TIME],
+                        CONF_DAY_TIME: user_input[CONF_DAY_TIME],
+                        CONF_EVENING_TIME: user_input[CONF_EVENING_TIME],
+                        CONF_NIGHT_TIME: user_input[CONF_NIGHT_TIME],
+                    }
+                )
                 self._remaining_days = unchecked_days
+                self._step_index += 1
 
                 if not self._remaining_days:
                     return self.async_create_entry(
                         title="",
-                        data={CONF_HOME_ZONE: self._home_zone, CONF_SCHEDULES: self._schedules},
+                        data={
+                            CONF_HOME_ZONE: self._home_zone,
+                            CONF_SCHEDULES: self._schedules,
+                        },
                     )
                 return await self.async_step_special()
 
-        schema_dict = {
-            vol.Required(CONF_HOME_ZONE, default=current_zone): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="zone")
+        # Build defaults array matching step 1 parameters dynamically
+        defaults = {CONF_HOME_ZONE: self._home_zone}
+        if saved_schedules and len(saved_schedules) > self._step_index:
+            active_profile = saved_schedules[self._step_index]
+            defaults.update(
+                {
+                    CONF_MORNING_TIME: active_profile.get(CONF_MORNING_TIME),
+                    CONF_DAY_TIME: active_profile.get(CONF_DAY_TIME),
+                    CONF_EVENING_TIME: active_profile.get(CONF_EVENING_TIME),
+                    CONF_NIGHT_TIME: active_profile.get(CONF_NIGHT_TIME),
+                }
             )
+            for d in range(7):
+                defaults[f"day_{d}"] = d in active_profile.get("days", [])
+        else:
+            for d in range(7):
+                defaults[f"day_{d}"] = True
+
+        schema_dict = {
+            vol.Required(
+                CONF_HOME_ZONE, default=defaults[CONF_HOME_ZONE]
+            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone"))
         }
-        schema_dict.update(get_time_schema({}))
+        schema_dict.update(get_time_schema(defaults))
         for d in self._remaining_days:
-            schema_dict[vol.Required(f"day_{d}", default=True)] = selector.BooleanSelector()
+            schema_dict[vol.Required(f"day_{d}", default=defaults[f"day_{d}"])] = (
+                selector.BooleanSelector()
+            )
 
         return self.async_show_form(
             step_id="init", data_schema=vol.Schema(schema_dict), errors=errors
@@ -224,48 +280,76 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_special(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Recursively gather options data for unassigned days during reconfiguration."""
+        """Recursively process remaining days maintaining stored form attributes."""
         errors: dict[str, str] = {}
         total_left = len(self._remaining_days)
+        current_config = {**self.config_entry.data, **self.config_entry.options}
+        saved_schedules = current_config.get(CONF_SCHEDULES, [])
 
         if user_input is not None:
             if total_left == 1:
                 checked_days = list(self._remaining_days)
                 unchecked_days = []
             else:
-                checked_days = [d for d in self._remaining_days if user_input.get(f"day_{d}", False)]
-                unchecked_days = [d for d in self._remaining_days if not user_input.get(f"day_{d}", False)]
+                checked_days = [
+                    d for d in self._remaining_days if user_input.get(f"day_{d}", False)
+                ]
+                unchecked_days = [
+                    d
+                    for d in self._remaining_days
+                    if not user_input.get(f"day_{d}", False)
+                ]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
             else:
-                self._schedules.append({
-                    "days": checked_days,
-                    CONF_MORNING_TIME: user_input[CONF_MORNING_TIME],
-                    CONF_DAY_TIME: user_input[CONF_DAY_TIME],
-                    CONF_EVENING_TIME: user_input[CONF_EVENING_TIME],
-                    CONF_NIGHT_TIME: user_input[CONF_NIGHT_TIME],
-                })
+                self._schedules.append(
+                    {
+                        "days": checked_days,
+                        CONF_MORNING_TIME: user_input[CONF_MORNING_TIME],
+                        CONF_DAY_TIME: user_input[CONF_DAY_TIME],
+                        CONF_EVENING_TIME: user_input[CONF_EVENING_TIME],
+                        CONF_NIGHT_TIME: user_input[CONF_NIGHT_TIME],
+                    }
+                )
                 self._remaining_days = unchecked_days
+                self._step_index += 1
 
                 if not self._remaining_days:
                     return self.async_create_entry(
                         title="",
-                        data={CONF_HOME_ZONE: self._home_zone, CONF_SCHEDULES: self._schedules},
+                        data={
+                            CONF_HOME_ZONE: self._home_zone,
+                            CONF_SCHEDULES: self._schedules,
+                        },
                     )
                 return await self.async_step_special()
 
-        schema_dict = get_time_schema({})
+        # Build defaults for the sub-steps
+        defaults = {}
+        if saved_schedules and len(saved_schedules) > self._step_index:
+            active_profile = saved_schedules[self._step_index]
+            defaults.update(
+                {
+                    CONF_MORNING_TIME: active_profile.get(CONF_MORNING_TIME),
+                    CONF_DAY_TIME: active_profile.get(CONF_DAY_TIME),
+                    CONF_EVENING_TIME: active_profile.get(CONF_EVENING_TIME),
+                    CONF_NIGHT_TIME: active_profile.get(CONF_NIGHT_TIME),
+                }
+            )
+            for d in self._remaining_days:
+                defaults[f"day_{d}"] = d in active_profile.get("days", [])
+        else:
+            for d in self._remaining_days:
+                defaults[f"day_{d}"] = True
+
+        schema_dict = get_time_schema(defaults)
         if total_left > 1:
             for d in self._remaining_days:
-                schema_dict[vol.Required(f"day_{d}", default=True)] = selector.BooleanSelector()
-
-        day_names = [f"{{{{day_{d}}}}}" for d in self._remaining_days]
-        placeholders = {"days": ", ".join(day_names)}
+                schema_dict[
+                    vol.Required(f"day_{d}", default=defaults[f"day_{d}"])
+                ] = selector.BooleanSelector()
 
         return self.async_show_form(
-            step_id="special",
-            data_schema=vol.Schema(schema_dict),
-            description_placeholders=placeholders,
-            errors=errors,
+            step_id="special", data_schema=vol.Schema(schema_dict), errors=errors
         )
