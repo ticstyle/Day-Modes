@@ -5,8 +5,8 @@
     },
     "step": {
       "user": {
-        "title": "Day Modes - Standard Schedule",
-        "description": "Configure your main time schedule parameters. Check all checkboxes for the days this profile should apply to. Leave days unchecked to give them unique special schedules later.",
+        "title": "Day Modes - Base Schedule",
+        "description": "Configure your main schedule times. Check the checkboxes for the days this profile applies to. Leave days unchecked to give them unique special schedules next.",
         "data": {
           "home_zone": "Tracked Zone",
           "morning_time": "Morning Mode Starts",
@@ -23,8 +23,8 @@
         }
       },
       "special": {
-        "title": "Day Modes - Special Schedule",
-        "description": "Configure the time variables for the remaining unassigned days: {days}",
+        "title": "Day Modes - Custom Schedule",
+        "description": "Configure the time variables for the remaining unassigned weekdays below. Uncheck days to split them into a separate profile.",
         "data": {
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
@@ -66,7 +66,7 @@
       },
       "special": {
         "title": "Reconfigure Special Schedule",
-        "description": "Adjust setup times for the remaining isolated days: {days}",
+        "description": "Adjust setup times for the remaining isolated days below.",
         "data": {
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
