@@ -1,44 +1,84 @@
 {
   "config": {
+    "error": {
+      "select_at_least_one_day": "You must select at least one day for this schedule profile."
+    },
     "step": {
       "user": {
-        "title": "Day Modes",
-        "description": "Configure your daily schedule. The sensor will automatically transition between these modes based on the time of day, provided someone is inside the tracked occupancy zone.",
+        "title": "Day Modes - Standard Schedule",
+        "description": "Configure your main time schedule parameters. Check all checkboxes for the days this profile should apply to. Leave days unchecked to give them unique special schedules later.",
         "data": {
           "home_zone": "Tracked Zone",
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
-          "night_time": "Night Mode Starts"
-        },
-        "data_description": {
-          "home_zone": "The zone monitored for presence tracking (e.g., zone.home). If empty, 'Away' mode triggers instantly.",
-          "morning_time": "Format HH:MM (e.g., 06:00). Active when someone is home during this period.",
-          "day_time": "Format HH:MM (e.g., 09:00). Active when someone is home during this period.",
-          "evening_time": "Format HH:MM (e.g., 20:00). Active when someone is home during this period.",
-          "night_time": "Format HH:MM (e.g., 23:00). Active when someone is home during this period."
+          "night_time": "Night Mode Starts",
+          "day_0": "Apply to Monday",
+          "day_1": "Apply to Tuesday",
+          "day_2": "Apply to Wednesday",
+          "day_3": "Apply to Thursday",
+          "day_4": "Apply to Friday",
+          "day_5": "Apply to Saturday",
+          "day_6": "Apply to Sunday"
+        }
+      },
+      "special": {
+        "title": "Day Modes - Special Schedule",
+        "description": "Configure the time variables for the remaining unassigned days: {days}",
+        "data": {
+          "morning_time": "Morning Mode Starts",
+          "day_time": "Day Mode Starts",
+          "evening_time": "Evening Mode Starts",
+          "night_time": "Night Mode Starts",
+          "day_0": "Apply to Monday",
+          "day_1": "Apply to Tuesday",
+          "day_2": "Apply to Wednesday",
+          "day_3": "Apply to Thursday",
+          "day_4": "Apply to Friday",
+          "day_5": "Apply to Saturday",
+          "day_6": "Apply to Sunday"
         }
       }
     }
   },
   "options": {
+    "error": {
+      "select_at_least_one_day": "You must select at least one day for this schedule profile."
+    },
     "step": {
       "init": {
-        "title": "Day Modes Configuration",
-        "description": "Adjust your schedule thresholds or change your monitored presence zone below. Changes apply instantly without losing historical data.",
+        "title": "Reconfigure Day Modes",
+        "description": "Adjust your time matrices. Specify which days should use this baseline configuration profile.",
         "data": {
           "home_zone": "Tracked Zone",
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
-          "night_time": "Night Mode Starts"
-        },
-        "data_description": {
-          "home_zone": "The zone monitored for presence tracking (e.g., zone.home). If empty, 'Away' mode triggers instantly.",
-          "morning_time": "Format HH:MM (e.g., 06:00). Active when someone is home during this period.",
-          "day_time": "Format HH:MM (e.g., 09:00). Active when someone is home during this period.",
-          "evening_time": "Format HH:MM (e.g., 20:00). Active when someone is home during this period.",
-          "night_time": "Format HH:MM (e.g., 23:00). Active when someone is home during this period."
+          "night_time": "Night Mode Starts",
+          "day_0": "Apply to Monday",
+          "day_1": "Apply to Tuesday",
+          "day_2": "Apply to Wednesday",
+          "day_3": "Apply to Thursday",
+          "day_4": "Apply to Friday",
+          "day_5": "Apply to Saturday",
+          "day_6": "Apply to Sunday"
+        }
+      },
+      "special": {
+        "title": "Reconfigure Special Schedule",
+        "description": "Adjust setup times for the remaining isolated days: {days}",
+        "data": {
+          "morning_time": "Morning Mode Starts",
+          "day_time": "Day Mode Starts",
+          "evening_time": "Evening Mode Starts",
+          "night_time": "Night Mode Starts",
+          "day_0": "Apply to Monday",
+          "day_1": "Apply to Tuesday",
+          "day_2": "Apply to Wednesday",
+          "day_3": "Apply to Thursday",
+          "day_4": "Apply to Friday",
+          "day_5": "Apply to Saturday",
+          "day_6": "Apply to Sunday"
         }
       }
     }
