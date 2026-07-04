@@ -24,6 +24,7 @@ from .const import (
     CONF_EVENING_TIME,
     CONF_NIGHT_TIME,
     CONF_SCHEDULES,
+    WEEKDAYS,
     MODE_AWAY,
     MODE_MORNING,
     MODE_DAY,
@@ -106,9 +107,13 @@ class DayModesSensor(SensorEntity):
             )
         )
 
-        # Track absolute time checkpoints across all configured schedule steps
         for schedule in self._config.get(CONF_SCHEDULES, []):
-            for key in [CONF_MORNING_TIME, CONF_DAY_TIME, CONF_EVENING_TIME, CONF_NIGHT_TIME]:
+            for key in [
+                CONF_MORNING_TIME,
+                CONF_DAY_TIME,
+                CONF_EVENING_TIME,
+                CONF_NIGHT_TIME,
+            ]:
                 boundary_time = parse_time_string(schedule[key])
                 self._unsub_listeners.append(
                     async_track_time_change(
@@ -120,7 +125,6 @@ class DayModesSensor(SensorEntity):
                     )
                 )
 
-        # Register a strict tracker at midnight to ensure calendar layout switches cleanly
         self._unsub_listeners.append(
             async_track_time_change(
                 self.hass, self._async_event_listener, hour=0, minute=0, second=0
@@ -141,10 +145,12 @@ class DayModesSensor(SensorEntity):
         self._update_state()
 
     def _get_active_times(self) -> dict[str, time] | None:
-        """Extract the exact active schedule profile mapped to the current day."""
-        current_weekday = datetime.now().weekday()
+        """Extract the exact active schedule profile mapped to the current day string."""
+        current_weekday_num = datetime.now().weekday()
+        current_weekday_str = WEEKDAYS.get(current_weekday_num)
+
         for schedule in self._config.get(CONF_SCHEDULES, []):
-            if current_weekday in schedule["days"]:
+            if current_weekday_str in schedule["days"]:
                 return {
                     MODE_MORNING: parse_time_string(schedule[CONF_MORNING_TIME]),
                     MODE_DAY: parse_time_string(schedule[CONF_DAY_TIME]),
@@ -236,8 +242,10 @@ class DayModesTimeSensor(SensorEntity):
     @property
     def native_value(self) -> str | None:
         """Return the dynamically isolated schedule time assigned to today."""
-        current_weekday = datetime.now().weekday()
+        current_weekday_num = datetime.now().weekday()
+        current_weekday_str = WEEKDAYS.get(current_weekday_num)
+
         for schedule in self._config.get(CONF_SCHEDULES, []):
-            if current_weekday in schedule["days"]:
+            if current_weekday_str in schedule["days"]:
                 return schedule.get(self._config_key)
         return None
