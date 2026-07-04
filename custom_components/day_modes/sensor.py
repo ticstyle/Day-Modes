@@ -23,6 +23,7 @@ from .const import (
     CONF_DAY_TIME,
     CONF_EVENING_TIME,
     CONF_NIGHT_TIME,
+    CONF_SCHEDULES,
     MODE_AWAY,
     MODE_MORNING,
     MODE_DAY,
@@ -47,7 +48,6 @@ async def async_setup_entry(
     """Set up the Day modes sensor platform and time entities."""
     config = {**config_entry.data, **config_entry.options}
 
-    # Generate the parent device container info using Day Modes as the model
     device_info = DeviceInfo(
         identifiers={(DOMAIN, config_entry.entry_id)},
         name="Day modes",
@@ -55,7 +55,6 @@ async def async_setup_entry(
         model="Day Modes",
     )
 
-    # Instantiate the primary tracker alongside the 4 layout configuration sensors
     entities = [
         DayModesSensor(config_entry.entry_id, config, device_info),
         DayModesTimeSensor(
@@ -74,7 +73,7 @@ async def async_setup_entry(
 
 
 class DayModesSensor(SensorEntity):
-    """Representation of the core Day Mode State Sensor."""
+    """Representation of the core Day Mode State Sensor tracking multi-day matrixes."""
 
     _attr_icon = "mdi:home-clock"
     _attr_has_entity_name = True
@@ -91,16 +90,8 @@ class DayModesSensor(SensorEntity):
         self._attr_name = "Current mode"
         self._unsub_listeners: list[Any] = []
 
-        # Parse string times safely to time objects
-        self._times = {
-            MODE_MORNING: parse_time_string(config[CONF_MORNING_TIME]),
-            MODE_DAY: parse_time_string(config[CONF_DAY_TIME]),
-            MODE_EVENING: parse_time_string(config[CONF_EVENING_TIME]),
-            MODE_NIGHT: parse_time_string(config[CONF_NIGHT_TIME]),
-        }
-
     async def async_added_to_hass(self) -> None:
-        """Register listeners when added to hass."""
+        """Register dynamic listeners for time boundaries and midnight roll-overs."""
 
         @callback
         def async_state_changed_listener(event: Event) -> None:
@@ -115,16 +106,26 @@ class DayModesSensor(SensorEntity):
             )
         )
 
-        for mode_time in self._times.values():
-            self._unsub_listeners.append(
-                async_track_time_change(
-                    self.hass,
-                    self._async_time_listener,
-                    hour=mode_time.hour,
-                    minute=mode_time.minute,
-                    second=mode_time.second,
+        # Track absolute time checkpoints across all configured schedule steps
+        for schedule in self._config.get(CONF_SCHEDULES, []):
+            for key in [CONF_MORNING_TIME, CONF_DAY_TIME, CONF_EVENING_TIME, CONF_NIGHT_TIME]:
+                boundary_time = parse_time_string(schedule[key])
+                self._unsub_listeners.append(
+                    async_track_time_change(
+                        self.hass,
+                        self._async_event_listener,
+                        hour=boundary_time.hour,
+                        minute=boundary_time.minute,
+                        second=boundary_time.second,
+                    )
                 )
+
+        # Register a strict tracker at midnight to ensure calendar layout switches cleanly
+        self._unsub_listeners.append(
+            async_track_time_change(
+                self.hass, self._async_event_listener, hour=0, minute=0, second=0
             )
+        )
 
         self._update_state()
 
@@ -135,9 +136,22 @@ class DayModesSensor(SensorEntity):
         self._unsub_listeners.clear()
 
     @callback
-    def _async_time_listener(self, now: datetime) -> None:
-        """Handle time-based state updates."""
+    def _async_event_listener(self, now: datetime) -> None:
+        """Trigger evaluation when time ticks over schedules or midnights."""
         self._update_state()
+
+    def _get_active_times(self) -> dict[str, time] | None:
+        """Extract the exact active schedule profile mapped to the current day."""
+        current_weekday = datetime.now().weekday()
+        for schedule in self._config.get(CONF_SCHEDULES, []):
+            if current_weekday in schedule["days"]:
+                return {
+                    MODE_MORNING: parse_time_string(schedule[CONF_MORNING_TIME]),
+                    MODE_DAY: parse_time_string(schedule[CONF_DAY_TIME]),
+                    MODE_EVENING: parse_time_string(schedule[CONF_EVENING_TIME]),
+                    MODE_NIGHT: parse_time_string(schedule[CONF_NIGHT_TIME]),
+                }
+        return None
 
     def _update_state(self) -> None:
         """Calculate and set the current state of the sensor."""
@@ -157,11 +171,17 @@ class DayModesSensor(SensorEntity):
             self.async_write_ha_state()
             return
 
+        times = self._get_active_times()
+        if not times:
+            self._attr_native_value = STATE_UNKNOWN
+            self.async_write_ha_state()
+            return
+
         current_time = datetime.now().time()
-        t_morning = self._times[MODE_MORNING]
-        t_day = self._times[MODE_DAY]
-        t_evening = self._times[MODE_EVENING]
-        t_night = self._times[MODE_NIGHT]
+        t_morning = times[MODE_MORNING]
+        t_day = times[MODE_DAY]
+        t_evening = times[MODE_EVENING]
+        t_night = times[MODE_NIGHT]
 
         if t_morning <= current_time < t_day:
             calculated_mode = MODE_MORNING
@@ -177,18 +197,15 @@ class DayModesSensor(SensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Return entity specific state attributes."""
+        """Return full matrix layout tracking data."""
         return {
             "tracked_zone": self._config[CONF_HOME_ZONE],
-            "morning_time": self._config[CONF_MORNING_TIME],
-            "day_time": self._config[CONF_DAY_TIME],
-            "evening_time": self._config[CONF_EVENING_TIME],
-            "night_time": self._config[CONF_NIGHT_TIME],
+            "total_profiles_configured": len(self._config.get(CONF_SCHEDULES, [])),
         }
 
 
 class DayModesTimeSensor(SensorEntity):
-    """Representation of a configuration time display sensor."""
+    """Representation of a dynamic calendar-aware time configuration entity."""
 
     _attr_icon = "mdi:clock-outline"
     _attr_has_entity_name = True
@@ -205,9 +222,9 @@ class DayModesTimeSensor(SensorEntity):
         self._attr_translation_key = config_key
         self.entity_id = f"sensor.day_modes_{config_key}"
         self._attr_device_info = device_info
-        self._attr_native_value = config[config_key]
+        self._config = config
+        self._config_key = config_key
 
-        # Clean fallback names without numbered prefixes
         names = {
             CONF_MORNING_TIME: "Morning start time",
             CONF_DAY_TIME: "Day start time",
@@ -215,3 +232,12 @@ class DayModesTimeSensor(SensorEntity):
             CONF_NIGHT_TIME: "Night start time",
         }
         self._attr_name = names.get(config_key)
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the dynamically isolated schedule time assigned to today."""
+        current_weekday = datetime.now().weekday()
+        for schedule in self._config.get(CONF_SCHEDULES, []):
+            if current_weekday in schedule["days"]:
+                return schedule.get(self._config_key)
+        return None
