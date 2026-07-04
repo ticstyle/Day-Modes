@@ -27,23 +27,23 @@ from .const import (
 )
 
 WEEKDAYS_EN = {
-    0: "Monday",
-    1: "Tuesday",
-    2: "Wednesday",
-    3: "Thursday",
-    4: "Friday",
-    5: "Saturday",
-    6: "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
 }
 
 WEEKDAYS_SV = {
-    0: "Måndag",
-    1: "Tisdag",
-    2: "Onsdag",
-    3: "Torsdag",
-    4: "Fredag",
-    5: "Lördag",
-    6: "Söndag",
+    "monday": "Måndag",
+    "tuesday": "Tisdag",
+    "wednesday": "Onsdag",
+    "thursday": "Torsdag",
+    "friday": "Fredag",
+    "saturday": "Lördag",
+    "sunday": "Söndag",
 }
 
 
@@ -74,9 +74,17 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     def __init__(self) -> None:
-        """Initialize the multi-step wizard properties."""
+        """Initialize the multi-step wizard properties using day strings."""
         self._schedules: list[dict[str, Any]] = []
-        self._remaining_days: list[int] = [0, 1, 2, 3, 4, 5, 6]
+        self._remaining_days: list[str] = [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday",
+        ]
         self._home_zone: str = DEFAULT_ZONE
 
     async def async_step_user(
@@ -84,12 +92,10 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Step 1: Configure home zone, default schedule, and select initial days."""
         errors: dict[str, str] = {}
-        lang = "sv" if self.hass.config.language == "sv" else "en"
-        day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
-            chosen_days = [int(d) for d in user_input.get("days", [])]
+            chosen_days = user_input.get("days", [])
 
             checked_days = [d for d in self._remaining_days if d in chosen_days]
             unchecked_days = [d for d in self._remaining_days if d not in chosen_days]
@@ -129,16 +135,14 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         }
         schema_dict.update(get_time_schema({}))
 
-        schema_dict[
-            vol.Required("days", default=[str(d) for d in self._remaining_days])
-        ] = selector.SelectSelector(
-            selector.SelectSelectorConfig(
-                options=[
-                    {"value": str(d), "label": day_map[d]}
-                    for d in self._remaining_days
-                ],
-                multiple=True,
-                mode=selector.SelectSelectorMode.LIST,
+        # Plain list of string values makes the checkbox list perfectly stable
+        schema_dict[vol.Required("days", default=list(self._remaining_days))] = (
+            selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=list(self._remaining_days),
+                    multiple=True,
+                    mode=selector.SelectSelectorMode.LIST,
+                )
             )
         )
 
@@ -155,11 +159,9 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
-            chosen_days = [int(d) for d in user_input.get("days", [])]
+            chosen_days = user_input.get("days", [])
             checked_days = [d for d in self._remaining_days if d in chosen_days]
-            unchecked_days = [
-                d for d in self._remaining_days if d not in chosen_days
-            ]
+            unchecked_days = [d for d in self._remaining_days if d not in chosen_days]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
@@ -189,18 +191,14 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 return await self.async_step_special()
 
-        # The day selection box is now rendered unconditionally, even for the last day
         schema_dict = get_time_schema({})
-        schema_dict[
-            vol.Required("days", default=[str(d) for d in self._remaining_days])
-        ] = selector.SelectSelector(
-            selector.SelectSelectorConfig(
-                options=[
-                    {"value": str(d), "label": day_map[d]}
-                    for d in self._remaining_days
-                ],
-                multiple=True,
-                mode=selector.SelectSelectorMode.LIST,
+        schema_dict[vol.Required("days", default=list(self._remaining_days))] = (
+            selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=list(self._remaining_days),
+                    multiple=True,
+                    mode=selector.SelectSelectorMode.LIST,
+                )
             )
         )
 
@@ -228,7 +226,15 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self) -> None:
         """Initialize options multi-step state trackers."""
         self._schedules: list[dict[str, Any]] = []
-        self._remaining_days: list[int] = [0, 1, 2, 3, 4, 5, 6]
+        self._remaining_days: list[str] = [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday",
+        ]
         self._step_index = 0
         self._home_zone = DEFAULT_ZONE
 
@@ -240,12 +246,10 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         current_config = {**self.config_entry.data, **self.config_entry.options}
         self._home_zone = current_config.get(CONF_HOME_ZONE, DEFAULT_ZONE)
         saved_schedules = current_config.get(CONF_SCHEDULES, [])
-        lang = "sv" if self.hass.config.language == "sv" else "en"
-        day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
-            chosen_days = [int(d) for d in user_input.get("days", [])]
+            chosen_days = user_input.get("days", [])
 
             checked_days = [d for d in self._remaining_days if d in chosen_days]
             unchecked_days = [d for d in self._remaining_days if d not in chosen_days]
@@ -289,12 +293,10 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
                 }
             )
             default_days = [
-                str(d)
-                for d in self._remaining_days
-                if d in active_profile.get("days", [])
+                d for d in self._remaining_days if d in active_profile.get("days", [])
             ]
         else:
-            default_days = [str(d) for d in self._remaining_days]
+            default_days = list(self._remaining_days)
 
         schema_dict = {
             vol.Required(
@@ -305,10 +307,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         schema_dict[vol.Required("days", default=default_days)] = (
             selector.SelectSelector(
                 selector.SelectSelectorConfig(
-                    options=[
-                        {"value": str(d), "label": day_map[d]}
-                        for d in self._remaining_days
-                    ],
+                    options=list(self._remaining_days),
                     multiple=True,
                     mode=selector.SelectSelectorMode.LIST,
                 )
@@ -330,11 +329,9 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         day_map = WEEKDAYS_SV if lang == "sv" else WEEKDAYS_EN
 
         if user_input is not None:
-            chosen_days = [int(d) for d in user_input.get("days", [])]
+            chosen_days = user_input.get("days", [])
             checked_days = [d for d in self._remaining_days if d in chosen_days]
-            unchecked_days = [
-                d for d in self._remaining_days if d not in chosen_days
-            ]
+            unchecked_days = [d for d in self._remaining_days if d not in chosen_days]
 
             if not checked_days:
                 errors["base"] = "select_at_least_one_day"
@@ -375,21 +372,16 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
                 }
             )
             default_days = [
-                str(d)
-                for d in self._remaining_days
-                if d in active_profile.get("days", [])
+                d for d in self._remaining_days if d in active_profile.get("days", [])
             ]
         else:
-            default_days = [str(d) for d in self._remaining_days]
+            default_days = list(self._remaining_days)
 
         schema_dict = get_time_schema(defaults)
         schema_dict[vol.Required("days", default=default_days)] = (
             selector.SelectSelector(
                 selector.SelectSelectorConfig(
-                    options=[
-                        {"value": str(d), "label": day_map[d]}
-                        for d in self._remaining_days
-                    ],
+                    options=list(self._remaining_days),
                     multiple=True,
                     mode=selector.SelectSelectorMode.LIST,
                 )
