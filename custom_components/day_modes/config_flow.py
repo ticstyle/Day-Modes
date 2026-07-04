@@ -107,15 +107,12 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         }
         schema_dict.update(get_time_schema({}))
 
-        # Combined compact multi-selection list block
+        # Pure string lists prevent JSON serialization issues completely
         schema_dict[
             vol.Required("days", default=[str(d) for d in self._remaining_days])
         ] = selector.SelectSelector(
             selector.SelectSelectorConfig(
-                options=[
-                    selector.SelectOptionDict(value=str(d))
-                    for d in self._remaining_days
-                ],
+                options=[str(d) for d in self._remaining_days],
                 multiple=True,
                 mode=selector.SelectSelectorMode.LIST,
             )
@@ -177,10 +174,7 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("days", default=[str(d) for d in self._remaining_days])
             ] = selector.SelectSelector(
                 selector.SelectSelectorConfig(
-                    options=[
-                        selector.SelectOptionDict(value=str(d))
-                        for d in self._remaining_days
-                    ],
+                    options=[str(d) for d in self._remaining_days],
                     multiple=True,
                     mode=selector.SelectSelectorMode.LIST,
                 )
@@ -280,10 +274,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         schema_dict[vol.Required("days", default=default_days)] = (
             selector.SelectSelector(
                 selector.SelectSelectorConfig(
-                    options=[
-                        selector.SelectOptionDict(value=str(d))
-                        for d in self._remaining_days
-                    ],
+                    options=[str(d) for d in self._remaining_days],
                     multiple=True,
                     mode=selector.SelectSelectorMode.LIST,
                 )
@@ -365,10 +356,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
             schema_dict[vol.Required("days", default=default_days)] = (
                 selector.SelectSelector(
                     selector.SelectSelectorConfig(
-                        options=[
-                            selector.SelectOptionDict(value=str(d))
-                            for d in self._remaining_days
-                        ],
+                        options=[str(d) for d in self._remaining_days],
                         multiple=True,
                         mode=selector.SelectSelectorMode.LIST,
                     )
