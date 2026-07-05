@@ -69,3 +69,28 @@ content: >
   {% else %}
     ⏰ Tonight's night mode schedule is set to trigger at {{ states('sensor.day_modes_night_time') }}.
   {% endif %}
+```
+
+### Example 2: Full Week Matrix Timetable Card
+To render a beautiful, clean overview card that automatically displays all your distinct weekly profiles and schedules, use the structured data inside the core sensor attributes:
+
+```yaml
+type: markdown
+title: 📅 Day Modes Schedules
+content: >
+  {% set profiles = state_attr('sensor.day_modes', 'schedules') %}
+  {% if profiles %}
+    {% for p in profiles %}
+      ### 🗓️ {{ p.days | join(', ') }}
+      | Mode | Start Time |
+      | :--- | :--- |
+      | 🌅 Morning | **{{ p.morning }}** |
+      | ☀️ Day | **{{ p.day }}** |
+      | 🌆 Evening | **{{ p.evening }}** |
+      | 🌙 Night | **{{ p.night }}** |
+      {% if not loop.last %}---{% endif %}
+    {% endfor %}
+  {% else %}
+    No schedules configured.
+  {% endif %}
+```
