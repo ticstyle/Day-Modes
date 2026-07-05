@@ -203,10 +203,23 @@ class DayModesSensor(SensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Return full matrix layout tracking data."""
+        """Return full matrix layout tracking data packaged for UI rendering."""
+        schedules_data = []
+        for idx, schedule in enumerate(self._config.get(CONF_SCHEDULES, [])):
+            # Capitalize day strings cleanly for frontend presentation
+            days_list = [d.capitalize() for d in schedule.get("days", [])]
+            schedules_data.append({
+                "profile": idx + 1,
+                "days": days_list,
+                "morning": schedule.get(CONF_MORNING_TIME),
+                "day": schedule.get(CONF_DAY_TIME),
+                "evening": schedule.get(CONF_EVENING_TIME),
+                "night": schedule.get(CONF_NIGHT_TIME),
+            })
+
         return {
             "tracked_zone": self._config[CONF_HOME_ZONE],
-            "total_profiles_configured": len(self._config.get(CONF_SCHEDULES, [])),
+            "schedules": schedules_data,
         }
 
 
@@ -249,3 +262,4 @@ class DayModesTimeSensor(SensorEntity):
             if current_weekday_str in schedule["days"]:
                 return schedule.get(self._config_key)
         return None
+        
