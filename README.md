@@ -76,21 +76,19 @@ To render a beautiful, clean overview card that automatically displays all your 
 
 ```yaml
 type: markdown
-title: 📅 Day Modes Schedules
-content: >
-  {% set profiles = state_attr('sensor.day_modes', 'schedules') %}
-  {% if profiles %}
-    {% for p in profiles %}
-      ### 🗓️ {{ p.days | join(', ') }}
-      | Mode | Start Time |
-      | :--- | :--- |
-      | 🌅 Morning | **{{ p.morning }}** |
-      | ☀️ Day | **{{ p.day }}** |
-      | 🌆 Evening | **{{ p.evening }}** |
-      | 🌙 Night | **{{ p.night }}** |
-      {% if not loop.last %}---{% endif %}
-    {% endfor %}
-  {% else %}
-    No schedules configured.
-  {% endif %}
+content: |-
+  📅 Day Mode Schedules
+    {% set profiles = state_attr('sensor.day_modes', 'schedules') %}
+    {% if profiles %}
+      {% for p in profiles %}
+        ### 🗓️ {{ p.days | join(', ') }}
+        | 🌅 Morning | **{{ p.morning }}** |
+        | ☀️ Day | **{{ p.day }}** |
+        | 🌆 Evening | **{{ p.evening }}** |
+        | 🌙 Night | **{{ p.night }}** |
+        {% if not loop.last %}---{% endif %}
+      {% endfor %}
+    {% else %}
+      No schedules configured.
+    {% endif %}
 ```
