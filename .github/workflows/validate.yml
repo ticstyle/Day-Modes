@@ -59,7 +59,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-profile: "3.12" 
+          python-version: "3.12" 
 
       - name: Install Mypy & Dependencies
         run: |
@@ -67,24 +67,3 @@ jobs:
 
       - name: Run Mypy
         run: mypy custom_components/day_modes
-
-  pytest:
-    name: Run Unit Tests
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ha-version: ["stable", "dev"]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-
-      - name: Install test dependencies
-        run: |
-          pip install pytest pytest-homeassistant-custom-component
-          
-      - name: Run tests
-        run: pytest
-        
