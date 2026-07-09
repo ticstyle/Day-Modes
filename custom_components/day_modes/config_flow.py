@@ -7,23 +7,23 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import callback
-from homeassistant.helpers import selector
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import selector
 
 from .const import (
-    DOMAIN,
-    DEFAULT_NAME,
-    DEFAULT_ZONE,
-    DEFAULT_MORNING_TIME,
-    DEFAULT_DAY_TIME,
-    DEFAULT_EVENING_TIME,
-    DEFAULT_NIGHT_TIME,
-    CONF_HOME_ZONE,
-    CONF_MORNING_TIME,
     CONF_DAY_TIME,
     CONF_EVENING_TIME,
+    CONF_HOME_ZONE,
+    CONF_MORNING_TIME,
     CONF_NIGHT_TIME,
     CONF_SCHEDULES,
+    DEFAULT_DAY_TIME,
+    DEFAULT_EVENING_TIME,
+    DEFAULT_MORNING_TIME,
+    DEFAULT_NAME,
+    DEFAULT_NIGHT_TIME,
+    DEFAULT_ZONE,
+    DOMAIN,
 )
 
 WEEKDAYS_EN = {
@@ -47,7 +47,7 @@ WEEKDAYS_SV = {
 }
 
 
-def get_time_schema(defaults: dict[str, Any]) -> dict[vol.Marker, Any]:
+def get_time_schema(defaults: dict[str, Any]) -> dict[Any, Any]:
     """Return the baseline time selectors populated with accurate defaults."""
     return {
         vol.Required(
@@ -89,7 +89,7 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> FlowResult[Any]:
         """Step 1: Configure home zone, default schedule, and select initial days."""
         errors: dict[str, str] = {}
 
@@ -152,7 +152,7 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_special(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> FlowResult[Any]:
         """Step 2 & onwards: Recursively isolate remaining weekdays including the final day."""
         errors: dict[str, str] = {}
         lang = "sv" if self.hass.config.language == "sv" else "en"
@@ -240,7 +240,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> FlowResult[Any]:
         """Initialize the reconfiguration wizard populating stored matrixes."""
         errors: dict[str, str] = {}
         current_config = {**self.config_entry.data, **self.config_entry.options}
@@ -320,7 +320,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_special(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> FlowResult[Any]:
         """Recursively process remaining days maintaining option constraints."""
         errors: dict[str, str] = {}
         current_config = {**self.config_entry.data, **self.config_entry.options}
