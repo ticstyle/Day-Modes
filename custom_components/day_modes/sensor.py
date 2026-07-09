@@ -17,19 +17,19 @@ from homeassistant.helpers.event import (
 )
 
 from .const import (
-    DOMAIN,
-    CONF_HOME_ZONE,
-    CONF_MORNING_TIME,
     CONF_DAY_TIME,
     CONF_EVENING_TIME,
+    CONF_HOME_ZONE,
+    CONF_MORNING_TIME,
     CONF_NIGHT_TIME,
     CONF_SCHEDULES,
-    WEEKDAYS,
+    DOMAIN,
     MODE_AWAY,
-    MODE_MORNING,
     MODE_DAY,
     MODE_EVENING,
+    MODE_MORNING,
     MODE_NIGHT,
+    WEEKDAYS,
 )
 
 
@@ -208,14 +208,16 @@ class DayModesSensor(SensorEntity):
         for idx, schedule in enumerate(self._config.get(CONF_SCHEDULES, [])):
             # Capitalize day strings cleanly for frontend presentation
             days_list = [d.capitalize() for d in schedule.get("days", [])]
-            schedules_data.append({
-                "profile": idx + 1,
-                "days": days_list,
-                "morning": schedule.get(CONF_MORNING_TIME),
-                "day": schedule.get(CONF_DAY_TIME),
-                "evening": schedule.get(CONF_EVENING_TIME),
-                "night": schedule.get(CONF_NIGHT_TIME),
-            })
+            schedules_data.append(
+                {
+                    "profile": idx + 1,
+                    "days": days_list,
+                    "morning": schedule.get(CONF_MORNING_TIME),
+                    "day": schedule.get(CONF_DAY_TIME),
+                    "evening": schedule.get(CONF_EVENING_TIME),
+                    "night": schedule.get(CONF_NIGHT_TIME),
+                }
+            )
 
         return {
             "tracked_zone": self._config[CONF_HOME_ZONE],
@@ -262,4 +264,3 @@ class DayModesTimeSensor(SensorEntity):
             if current_weekday_str in schedule["days"]:
                 return schedule.get(self._config_key)
         return None
-        
