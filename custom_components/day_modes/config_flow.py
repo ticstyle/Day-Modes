@@ -5,9 +5,13 @@ from __future__ import annotations
 from typing import Any
 import voluptuous as vol
 
-from homeassistant import config_entries
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 
 from .const import (
@@ -68,7 +72,7 @@ def get_time_schema(defaults: dict[str, Any]) -> dict[Any, Any]:
     }
 
 
-class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class DayModesConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a multi-step dynamic config flow for Day modes."""
 
     VERSION = 1
@@ -89,7 +93,7 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult[Any]:
+    ) -> ConfigFlowResult:
         """Step 1: Configure home zone, default schedule, and select initial days."""
         errors: dict[str, str] = {}
 
@@ -128,7 +132,7 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 return await self.async_step_special()
 
-        schema_dict = {
+        schema_dict: dict[Any, Any] = {
             vol.Required(
                 CONF_HOME_ZONE, default=self._home_zone
             ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone"))
@@ -152,7 +156,7 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_special(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult[Any]:
+    ) -> ConfigFlowResult:
         """Step 2 & onwards: Recursively isolate remaining weekdays including the final day."""
         errors: dict[str, str] = {}
         lang = "sv" if self.hass.config.language == "sv" else "en"
@@ -191,7 +195,7 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 return await self.async_step_special()
 
-        schema_dict = get_time_schema({})
+        schema_dict: dict[Any, Any] = get_time_schema({})
         schema_dict[vol.Required("days", default=list(self._remaining_days))] = (
             selector.SelectSelector(
                 selector.SelectSelectorConfig(
@@ -214,13 +218,13 @@ class DayModesConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(
-        config_entry: config_entries.ConfigEntry,
+        config_entry: ConfigEntry,
     ) -> DayModesOptionsFlowHandler:
         """Get the options flow for this handler."""
         return DayModesOptionsFlowHandler()
 
 
-class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
+class DayModesOptionsFlowHandler(OptionsFlow):
     """Handle options flow changes extracting active historical datasets."""
 
     def __init__(self) -> None:
@@ -240,7 +244,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult[Any]:
+    ) -> ConfigFlowResult:
         """Initialize the reconfiguration wizard populating stored matrixes."""
         errors: dict[str, str] = {}
         current_config = {**self.config_entry.data, **self.config_entry.options}
@@ -298,7 +302,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         else:
             default_days = list(self._remaining_days)
 
-        schema_dict = {
+        schema_dict: dict[Any, Any] = {
             vol.Required(
                 CONF_HOME_ZONE, default=defaults[CONF_HOME_ZONE]
             ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone"))
@@ -320,7 +324,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_special(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult[Any]:
+    ) -> ConfigFlowResult:
         """Recursively process remaining days maintaining option constraints."""
         errors: dict[str, str] = {}
         current_config = {**self.config_entry.data, **self.config_entry.options}
@@ -377,7 +381,7 @@ class DayModesOptionsFlowHandler(config_entries.OptionsFlow):
         else:
             default_days = list(self._remaining_days)
 
-        schema_dict = get_time_schema(defaults)
+        schema_dict: dict[Any, Any] = get_time_schema(defaults)
         schema_dict[vol.Required("days", default=default_days)] = (
             selector.SelectSelector(
                 selector.SelectSelectorConfig(
