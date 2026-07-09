@@ -8,7 +8,7 @@ from typing import Any
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNKNOWN
-from homeassistant.core import Event, HomeAssistant, callback
+from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import (
@@ -65,7 +65,9 @@ async def async_setup_entry(
         DayModesTimeSensor(
             config_entry.entry_id, config, CONF_EVENING_TIME, device_info
         ),
-        DayModesTimeSensor(config_entry.entry_id, config, CONF_NIGHT_TIME, device_info),
+        DayModesTimeSensor(
+            config_entry.entry_id, config, CONF_NIGHT_TIME, device_info
+        ),
     ]
 
     async_add_entities(entities, update_before_add=True)
@@ -93,7 +95,7 @@ class DayModesSensor(SensorEntity):
         """Register dynamic listeners for time boundaries and midnight roll-overs."""
 
         @callback
-        def async_state_changed_listener(event: Event) -> None:
+        def async_state_changed_listener(event: Event[EventStateChangedData]) -> None:
             """Handle zone state changes."""
             self._update_state()
 
