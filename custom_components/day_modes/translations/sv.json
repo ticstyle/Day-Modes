@@ -1,44 +1,60 @@
 {
   "config": {
+    "error": {
+      "select_at_least_one_day": "Du måste välja minst en veckodag för detta schema."
+    },
     "step": {
       "user": {
-        "title": "Day modes",
-        "description": "Konfigurera ditt dygns schema. Sensorn växlar automatiskt mellan dessa lägen baserat på klockslagen, så länge någon befinner sig inom den spårade zonen.",
+        "title": "Day modes - Standardschema",
+        "description": "Ställ in ditt huvudschema. Markera de dagar som ska använda dessa tider. Lämna dagar tomma om du vill ge dem unika specialtider i nästa steg.",
         "data": {
           "home_zone": "Spårad zon",
           "morning_time": "Morgonläge börjar",
           "day_time": "Dagläge börjar",
           "evening_time": "Kvällsläge börjar",
-          "night_time": "Nattläge börjar"
-        },
-        "data_description": {
-          "home_zone": "Zonen som övervakas för närvaro (t.ex. zone.home). Om zonen är tom aktiveras läget 'Borta' omedelbart.",
-          "morning_time": "Ange som TT:MM (t.ex. 06:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "day_time": "Ange som TT:MM (t.ex. 09:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "evening_time": "Ange som TT:MM (t.ex. 20:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "night_time": "Ange som TT:MM (t.ex. 23:00). Aktivt när någon är hemma under detta tidsintervall."
+          "night_time": "Nattläge börjar",
+          "days": "Aktivt för dessa dagar"
+        }
+      },
+      "special": {
+        "title": "Day modes - Specialschema",
+        "description": "Konfigurera tiderna för de återstående dagarna: {remaining_days}. Bocka ur dagar om du vill dela upp dem i ytterligare en unik profil.",
+        "data": {
+          "morning_time": "Morgonläge börjar",
+          "day_time": "Dagläge börjar",
+          "evening_time": "Kvällsläge börjar",
+          "night_time": "Nattläge börjar",
+          "days": "Aktivt för dessa dagar"
         }
       }
     }
   },
   "options": {
+    "error": {
+      "select_at_least_one_day": "Du måste välja minst en veckodag för detta schema."
+    },
     "step": {
       "init": {
-        "title": "Inställningar för Day modes",
-        "description": "Justera dina tidsgränser eller byt ut vilken zon som ska övervakas. Ändringarna verkställs direkt utan att du tappar historik.",
+        "title": "Ändra inställningar för Day modes",
+        "description": "Justera dina tidsmatriser. Specificera vilka dagar som ska använda detta basschema.",
         "data": {
           "home_zone": "Spårad zon",
           "morning_time": "Morgonläge börjar",
           "day_time": "Dagläge börjar",
           "evening_time": "Kvällsläge börjar",
-          "night_time": "Nattläge börjar"
-        },
-        "data_description": {
-          "home_zone": "Zonen som övervakas för närvaro (t.ex. zone.home). Om zonen är tom aktiveras läget 'Borta' omedelbart.",
-          "morning_time": "Ange som TT:MM (t.ex. 06:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "day_time": "Ange som TT:MM (t.ex. 09:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "evening_time": "Ange som TT:MM (t.ex. 20:00). Aktivt när någon är hemma under detta tidsintervall.",
-          "night_time": "Ange som TT:MM (t.ex. 23:00). Aktivt när någon är hemma under detta tidsintervall."
+          "night_time": "Nattläge börjar",
+          "days": "Aktivt för dessa dagar"
+        }
+      },
+      "special": {
+        "title": "Ändra inställningar för specialschema",
+        "description": "Justera inställningarna för de återstående unika dagarna: {remaining_days}",
+        "data": {
+          "morning_time": "Morgonläge börjar",
+          "day_time": "Dagläge börjar",
+          "evening_time": "Kvällsläge börjar",
+          "night_time": "Nattläge börjar",
+          "days": "Aktivt för dessa dagar"
         }
       }
     }
@@ -66,6 +82,19 @@
       },
       "night_time": {
         "name": "Starttid för natt"
+      }
+    }
+  },
+  "selector": {
+    "days": {
+      "options": {
+        "monday": "Måndag",
+        "tuesday": "Tisdag",
+        "wednesday": "Onsdag",
+        "thursday": "Torsdag",
+        "friday": "Fredag",
+        "saturday": "Lördag",
+        "sunday": "Söndag"
       }
     }
   }
