@@ -75,7 +75,7 @@ def get_time_schema(defaults: dict[str, Any]) -> dict[Any, Any]:
 class DayModesConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a multi-step dynamic config flow for Day modes."""
 
-    VERSION = 1
+    VERSION = 2
 
     def __init__(self) -> None:
         """Initialize the multi-step wizard properties using day strings."""
