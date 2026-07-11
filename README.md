@@ -7,7 +7,7 @@
 [![Ruff](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/validate.yml?branch=main&job=ruff&label=Ruff&style=for-the-badge)](https://github.com/ticstyle/Day-Modes/actions/workflows/validate.yml)
 [![Mypy](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/validate.yml?branch=main&job=mypy&label=Mypy&style=for-the-badge)](https://github.com/ticstyle/Day-Modes/actions/workflows/validate.yml)
 ![](https://img.shields.io/github/license/ticstyle/Day-Modes?style=for-the-badge)
-![](https://img.shields.io/github/downloads/ticstyle/Day-Modes/total?style=for-the-badge&color=green)
+![](https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=41BDF5&logo=home-assistant&label=installs&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json&query=%24.day_modes.total)
 ![](https://img.shields.io/github/issues/ticstyle/Day-Modes?style=for-the-badge&color=orange)
 
 A modern Home Assistant custom integration that creates a dynamic device and sensor ecosystem to automatically track and cycle through custom day modes (Morning, Day, Evening, Night, Away) based on a personalized weekday schedule matrix and zone occupancy.
