@@ -65,7 +65,9 @@ async def async_setup_entry(
         DayModesTimeSensor(
             config_entry.entry_id, config, CONF_EVENING_TIME, device_info
         ),
-        DayModesTimeSensor(config_entry.entry_id, config, CONF_NIGHT_TIME, device_info),
+        DayModesTimeSensor(
+            config_entry.entry_id, config, CONF_NIGHT_TIME, device_info
+        ),
     ]
 
     async_add_entities(entities, update_before_add=True)
@@ -83,7 +85,6 @@ class DayModesSensor(SensorEntity):
     ) -> None:
         """Initialize the sensor."""
         self._attr_unique_id = f"{entry_id}_sensor"
-        self.entity_id = "sensor.day_modes"
         self._config = config
         self._attr_device_info = device_info
         self._attr_name = "Current mode"
@@ -239,7 +240,6 @@ class DayModesTimeSensor(SensorEntity):
         """Initialize the time sensor."""
         self._attr_unique_id = f"{entry_id}_{config_key}"
         self._attr_translation_key = config_key
-        self.entity_id = f"sensor.day_modes_{config_key}"
         self._attr_device_info = device_info
         self._config = config
         self._config_key = config_key
