@@ -5,7 +5,7 @@
     },
     "step": {
       "user": {
-        "title": "Day modes - Base Schedule",
+        "title": "Day Modes - Base Schedule",
         "description": "Configure your main schedule times. Select the days this profile applies to. Leave days unselected to split them into a custom schedule next.",
         "data": {
           "home_zone": "Tracked Zone",
@@ -17,7 +17,7 @@
         }
       },
       "special": {
-        "title": "Day modes - Custom Schedule",
+        "title": "Day Modes - Custom Schedule",
         "description": "Configure the time variables for the remaining unassigned weekdays: {remaining_days}. Uncheck days to split them into a separate profile.",
         "data": {
           "morning_time": "Morning Mode Starts",
