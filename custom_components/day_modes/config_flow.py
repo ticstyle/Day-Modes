@@ -321,7 +321,9 @@ class DayModesOptionsFlowHandler(OptionsFlow):
             ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone")),
             vol.Optional(
                 CONF_VACATION_CALENDAR, default=self._vacation_calendar
-            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="calendar")),
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="calendar")
+            ),
         }
         schema_dict.update(get_time_schema(defaults))
         schema_dict[vol.Required("days", default=default_days)] = (
