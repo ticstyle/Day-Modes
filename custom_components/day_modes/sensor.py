@@ -1,6 +1,6 @@
 """Platform for sensor integration."""
 
-from __future annotations
+from __future__ import annotations
 
 from datetime import datetime, time
 from typing import Any
