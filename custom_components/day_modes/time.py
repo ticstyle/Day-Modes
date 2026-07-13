@@ -52,24 +52,22 @@ class DayModesVacationTime(TimeEntity):
         self._attr_unique_id = f"{config_entry.entry_id}_vacation_morning_time"
         self._attr_name = "Vacation morning time"
 
-        @property
-        def native_value(self) -> time:
-            """Return the currently configured vacation morning time."""
-            time_str = self._config_entry.options.get(
-                CONF_VACATION_MORNING_TIME,
-                self._config.get(
-                    CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME
-                ),
-            )
-            return datetime.strptime(time_str, "%H:%M").time()
+    @property
+    def native_value(self) -> time:
+        """Return the currently configured vacation morning time."""
+        time_str = self._config_entry.options.get(
+            CONF_VACATION_MORNING_TIME,
+            self._config.get(CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME),
+        )
+        return datetime.strptime(time_str, "%H:%M").time()
 
-        async def async_set_value(self, value: time) -> None:
-            """Update the option value in the configuration entry live."""
-            time_str = value.strftime("%H:%M")
-            new_options = {
-                **self._config_entry.options,
-                CONF_VACATION_MORNING_TIME: time_str,
-            }
-            self.hass.config_entries.async_update_entry(
-                self._config_entry, options=new_options
-            )
+    async def async_set_value(self, value: time) -> None:
+        """Update the option value in the configuration entry live."""
+        time_str = value.strftime("%H:%M")
+        new_options = {
+            **self._config_entry.options,
+            CONF_VACATION_MORNING_TIME: time_str,
+        }
+        self.hass.config_entries.async_update_entry(
+            self._config_entry, options=new_options
+        )
