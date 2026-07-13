@@ -123,6 +123,21 @@ class DayModesSensor(SensorEntity):
             )
         )
 
+        # Track the dynamic vacation time variable to ensure accurate transitions
+        vacation_time_str = self._config.get(
+            CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME
+        )
+        v_time = parse_time_string(vacation_time_str)
+        self._unsub_listeners.append(
+            async_track_time_change(
+                self.hass,
+                self._async_event_listener,
+                hour=v_time.hour,
+                minute=v_time.minute,
+                second=v_time.second,
+            )
+        )
+
         for schedule in self._config.get(CONF_SCHEDULES, []):
             for key in [
                 CONF_MORNING_TIME,
