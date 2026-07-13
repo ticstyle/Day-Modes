@@ -5,10 +5,11 @@
     },
     "step": {
       "user": {
-        "title": "Day modes - Base Schedule",
+        "title": "Day Modes - Base Schedule",
         "description": "Configure your main schedule times. Select the days this profile applies to. Leave days unselected to split them into a custom schedule next.",
         "data": {
           "home_zone": "Tracked Zone",
+          "vacation_calendar": "Vacation Calendar (Optional)",
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
@@ -17,7 +18,7 @@
         }
       },
       "special": {
-        "title": "Day modes - Custom Schedule",
+        "title": "Day Modes - Custom Schedule",
         "description": "Configure the time variables for the remaining unassigned weekdays: {remaining_days}. Uncheck days to split them into a separate profile.",
         "data": {
           "morning_time": "Morning Mode Starts",
@@ -39,6 +40,7 @@
         "description": "Adjust your time matrices. Specify which days should use this baseline configuration profile.",
         "data": {
           "home_zone": "Tracked Zone",
+          "vacation_calendar": "Vacation Calendar (Optional)",
           "morning_time": "Morning Mode Starts",
           "day_time": "Day Mode Starts",
           "evening_time": "Evening Mode Starts",
@@ -82,6 +84,19 @@
       },
       "night_time": {
         "name": "Night start time"
+      },
+      "vacation_calendar": {
+        "name": "Vacation calendar"
+      }
+    },
+    "switch": {
+      "vacation_mode": {
+        "name": "Vacation mode"
+      }
+    },
+    "time": {
+      "vacation_morning_time": {
+        "name": "Vacation morning time"
       }
     }
   },

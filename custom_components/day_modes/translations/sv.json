@@ -1,60 +1,62 @@
 {
   "config": {
     "error": {
-      "select_at_least_one_day": "Du måste välja minst en veckodag för detta schema."
+      "select_at_least_one_day": "Du måste välja minst en dag för denna schemaprofil."
     },
     "step": {
       "user": {
-        "title": "Day modes - Standardschema",
-        "description": "Ställ in ditt huvudschema. Markera de dagar som ska använda dessa tider. Lämna dagar tomma om du vill ge dem unika specialtider i nästa steg.",
+        "title": "Day Modes - Grundschema",
+        "description": "Konfigurera dina huvudsakliga schematider. Välj de dagar som denna profil ska gälla för. Lämna dagar ovalda för att dela upp dem i ett anpassat schema i nästa steg.",
         "data": {
-          "home_zone": "Spårad zon",
-          "morning_time": "Morgonläge börjar",
-          "day_time": "Dagläge börjar",
-          "evening_time": "Kvällsläge börjar",
-          "night_time": "Nattläge börjar",
-          "days": "Aktivt för dessa dagar"
+          "home_zone": "Övervakad zon",
+          "vacation_calendar": "Semesterkalender (Valfritt)",
+          "morning_time": "Morgonläge startar",
+          "day_time": "Dagläge startar",
+          "evening_time": "Kvällsläge startar",
+          "night_time": "Nattläge startar",
+          "days": "Aktiv för dessa dagar"
         }
       },
       "special": {
-        "title": "Day modes - Specialschema",
-        "description": "Konfigurera tiderna för de återstående dagarna: {remaining_days}. Bocka ur dagar om du vill dela upp dem i ytterligare en unik profil.",
+        "title": "Day Modes - Anpassat schema",
+        "description": "Konfigurera tidsvariablerna för de återstående otilldelade veckodagarna: {remaining_days}. Avmarkera dagar för att dela upp dem i en separat profil.",
         "data": {
-          "morning_time": "Morgonläge börjar",
-          "day_time": "Dagläge börjar",
-          "evening_time": "Kvällsläge börjar",
-          "night_time": "Nattläge börjar",
-          "days": "Aktivt för dessa dagar"
+          "morning_time": "Morgonläge startar",
+          "day_time": "Dagläge startar",
+          "evening_time": "Kvällsläge startar",
+          "night_time": "Nattläge startar",
+          "days": "Active för dessa dagar"
         }
       }
     }
   },
   "options": {
     "error": {
-      "select_at_least_one_day": "Du måste välja minst en veckodag för detta schema."
+      "select_at_least_one_day": "Du måste välja minst en dag för denna schemaprofil."
     },
     "step": {
       "init": {
-        "title": "Ändra inställningar för Day modes",
-        "description": "Justera dina tidsmatriser. Specificera vilka dagar som ska använda detta basschema.",
+        "title": "Omkonfigurera Day Modes",
+        "description": "Justera dina tidsmatriser. Ange vilka dagar som ska använda denna profil för grundkonfiguration.",
         "data": {
-          "home_zone": "Spårad zon",
-          "morning_time": "Morgonläge börjar",
-          "day_time": "Dagläge börjar",
-          "evening_time": "Kvällsläge börjar",
-          "night_time": "Nattläge börjar",
-          "days": "Aktivt för dessa dagar"
+          "home_zone": "Övervakad zon",
+          "vacation_calendar": "Semesterkalender (Valfritt)",
+          "morning_time": "Morgonläge startar",
+          "day_time": "Dagläge startar",
+          "evening_time": "Kvällsläge startar",
+          "night_time": "Nattläge startar",
+          "days": "Aktiv för dessa dagar"
         }
       },
       "special": {
-        "title": "Ändra inställningar för specialschema",
-        "description": "Justera inställningarna för de återstående unika dagarna: {remaining_days}",
+        "title": "Omkonfigurera specialschema",
+        "description": "Justera inställningstider för de återstående isolerade dagarna: {remaining_days}",
         "data": {
-          "morning_time": "Morgonläge börjar",
-          "day_time": "Dagläge börjar",
-          "evening_time": "Kvällsläge börjar",
-          "night_time": "Nattläge börjar",
-          "days": "Aktivt för dessa dagar"
+          "morning_time": "Morgonläge startar",
+          "day_time": "Dagläge startar",
+          "evening_time": "Kvällsläge startar",
+          "night_time": "Nattläge startar",
+          "days": "Aktiv för dessa dagar"
         }
       }
     }
@@ -62,7 +64,7 @@
   "entity": {
     "sensor": {
       "current_mode": {
-        "name": "Aktuellt läge",
+        "name": "Nuvarande läge",
         "state": {
           "away": "Borta",
           "morning": "Morgon",
@@ -82,6 +84,19 @@
       },
       "night_time": {
         "name": "Starttid för natt"
+      },
+      "vacation_calendar": {
+        "name": "Semesterkalender"
+      }
+    },
+    "switch": {
+      "vacation_mode": {
+        "name": "Semesterläge"
+      }
+    },
+    "time": {
+      "vacation_morning_time": {
+        "name": "Morgontid för semester"
       }
     }
   },

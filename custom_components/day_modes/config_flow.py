@@ -21,6 +21,7 @@ from .const import (
     CONF_MORNING_TIME,
     CONF_NIGHT_TIME,
     CONF_SCHEDULES,
+    CONF_VACATION_CALENDAR,
     DEFAULT_DAY_TIME,
     DEFAULT_EVENING_TIME,
     DEFAULT_MORNING_TIME,
@@ -75,7 +76,7 @@ def get_time_schema(defaults: dict[str, Any]) -> dict[Any, Any]:
 class DayModesConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a multi-step dynamic config flow for Day modes."""
 
-    VERSION = 2
+    VERSION = 3
 
     def __init__(self) -> None:
         """Initialize the multi-step wizard properties using day strings."""
@@ -90,6 +91,7 @@ class DayModesConfigFlow(ConfigFlow, domain=DOMAIN):
             "sunday",
         ]
         self._home_zone: str = DEFAULT_ZONE
+        self._vacation_calendar: str | None = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -99,6 +101,7 @@ class DayModesConfigFlow(ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
+            self._vacation_calendar = user_input.get(CONF_VACATION_CALENDAR)
             chosen_days = user_input.get("days", [])
 
             checked_days = [d for d in self._remaining_days if d in chosen_days]
@@ -124,10 +127,12 @@ class DayModesConfigFlow(ConfigFlow, domain=DOMAIN):
                         data={
                             CONF_HOME_ZONE: self._home_zone,
                             CONF_SCHEDULES: self._schedules,
+                            CONF_VACATION_CALENDAR: self._vacation_calendar,
                         },
                         options={
                             CONF_HOME_ZONE: self._home_zone,
                             CONF_SCHEDULES: self._schedules,
+                            CONF_VACATION_CALENDAR: self._vacation_calendar,
                         },
                     )
                 return await self.async_step_special()
@@ -135,11 +140,13 @@ class DayModesConfigFlow(ConfigFlow, domain=DOMAIN):
         schema_dict: dict[Any, Any] = {
             vol.Required(
                 CONF_HOME_ZONE, default=self._home_zone
-            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone"))
+            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone")),
+            vol.Optional(CONF_VACATION_CALENDAR): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="calendar")
+            ),
         }
         schema_dict.update(get_time_schema({}))
 
-        # Plain list of string values makes the checkbox list perfectly stable
         schema_dict[vol.Required("days", default=list(self._remaining_days))] = (
             selector.SelectSelector(
                 selector.SelectSelectorConfig(
@@ -187,10 +194,12 @@ class DayModesConfigFlow(ConfigFlow, domain=DOMAIN):
                         data={
                             CONF_HOME_ZONE: self._home_zone,
                             CONF_SCHEDULES: self._schedules,
+                            CONF_VACATION_CALENDAR: self._vacation_calendar,
                         },
                         options={
                             CONF_HOME_ZONE: self._home_zone,
                             CONF_SCHEDULES: self._schedules,
+                            CONF_VACATION_CALENDAR: self._vacation_calendar,
                         },
                     )
                 return await self.async_step_special()
@@ -241,6 +250,7 @@ class DayModesOptionsFlowHandler(OptionsFlow):
         ]
         self._step_index = 0
         self._home_zone = DEFAULT_ZONE
+        self._vacation_calendar: str | None = None
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -249,10 +259,12 @@ class DayModesOptionsFlowHandler(OptionsFlow):
         errors: dict[str, str] = {}
         current_config = {**self.config_entry.data, **self.config_entry.options}
         self._home_zone = current_config.get(CONF_HOME_ZONE, DEFAULT_ZONE)
+        self._vacation_calendar = current_config.get(CONF_VACATION_CALENDAR)
         saved_schedules = current_config.get(CONF_SCHEDULES, [])
 
         if user_input is not None:
             self._home_zone = user_input[CONF_HOME_ZONE]
+            self._vacation_calendar = user_input.get(CONF_VACATION_CALENDAR)
             chosen_days = user_input.get("days", [])
 
             checked_days = [d for d in self._remaining_days if d in chosen_days]
@@ -279,6 +291,7 @@ class DayModesOptionsFlowHandler(OptionsFlow):
                         data={
                             CONF_HOME_ZONE: self._home_zone,
                             CONF_SCHEDULES: self._schedules,
+                            CONF_VACATION_CALENDAR: self._vacation_calendar,
                         },
                     )
                 return await self.async_step_special()
@@ -305,7 +318,12 @@ class DayModesOptionsFlowHandler(OptionsFlow):
         schema_dict: dict[Any, Any] = {
             vol.Required(
                 CONF_HOME_ZONE, default=defaults[CONF_HOME_ZONE]
-            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone"))
+            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="zone")),
+            vol.Optional(
+                CONF_VACATION_CALENDAR, default=self._vacation_calendar
+            ): selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="calendar")
+            ),
         }
         schema_dict.update(get_time_schema(defaults))
         schema_dict[vol.Required("days", default=default_days)] = (
@@ -358,6 +376,7 @@ class DayModesOptionsFlowHandler(OptionsFlow):
                         data={
                             CONF_HOME_ZONE: self._home_zone,
                             CONF_SCHEDULES: self._schedules,
+                            CONF_VACATION_CALENDAR: self._vacation_calendar,
                         },
                     )
                 return await self.async_step_special()

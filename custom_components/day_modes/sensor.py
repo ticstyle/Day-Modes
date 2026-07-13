@@ -23,6 +23,9 @@ from .const import (
     CONF_MORNING_TIME,
     CONF_NIGHT_TIME,
     CONF_SCHEDULES,
+    CONF_VACATION_CALENDAR,
+    CONF_VACATION_MORNING_TIME,
+    DEFAULT_VACATION_MORNING_TIME,
     DOMAIN,
     MODE_AWAY,
     MODE_DAY,
@@ -58,6 +61,7 @@ async def async_setup_entry(
 
     entities = [
         DayModesSensor(config_entry.entry_id, config, device_info),
+        DayModesVacationCalendarSensor(config_entry.entry_id, config, device_info),
         DayModesTimeSensor(
             config_entry.entry_id, config, CONF_MORNING_TIME, device_info
         ),
@@ -96,11 +100,39 @@ class DayModesSensor(SensorEntity):
             """Handle zone state changes."""
             self._update_state()
 
+        @callback
+        def async_switch_listener(event: Event[EventStateChangedData]) -> None:
+            """Handle vacation switch shifts directly."""
+            self._update_state()
+
         self._unsub_listeners.append(
             async_track_state_change_event(
                 self.hass,
                 [self._config[CONF_HOME_ZONE]],
                 async_state_changed_listener,
+            )
+        )
+
+        self._unsub_listeners.append(
+            async_track_state_change_event(
+                self.hass,
+                ["switch.day_modes_vacation_mode"],
+                async_switch_listener,
+            )
+        )
+
+        # Track the dynamic vacation time variable to ensure accurate transitions
+        vacation_time_str = self._config.get(
+            CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME
+        )
+        v_time = parse_time_string(vacation_time_str)
+        self._unsub_listeners.append(
+            async_track_time_change(
+                self.hass,
+                self._async_event_listener,
+                hour=v_time.hour,
+                minute=v_time.minute,
+                second=v_time.second,
             )
         )
 
@@ -180,8 +212,19 @@ class DayModesSensor(SensorEntity):
             self.async_write_ha_state()
             return
 
+        vacation_state = self.hass.states.get("switch.day_modes_vacation_mode")
+        is_vacation = vacation_state is not None and vacation_state.state == "on"
+
         current_time = datetime.now().time()
-        t_morning = times[MODE_MORNING]
+
+        if is_vacation:
+            vacation_time_str = self._config.get(
+                CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME
+            )
+            t_morning = parse_time_string(vacation_time_str)
+        else:
+            t_morning = times[MODE_MORNING]
+
         t_day = times[MODE_DAY]
         t_evening = times[MODE_EVENING]
         t_night = times[MODE_NIGHT]
@@ -203,7 +246,6 @@ class DayModesSensor(SensorEntity):
         """Return full matrix layout tracking data packaged for UI rendering."""
         schedules_data = []
         for idx, schedule in enumerate(self._config.get(CONF_SCHEDULES, [])):
-            # Capitalize day strings cleanly for frontend presentation
             days_list = [d.capitalize() for d in schedule.get("days", [])]
             schedules_data.append(
                 {
@@ -220,6 +262,28 @@ class DayModesSensor(SensorEntity):
             "tracked_zone": self._config[CONF_HOME_ZONE],
             "schedules": schedules_data,
         }
+
+
+class DayModesVacationCalendarSensor(SensorEntity):
+    """Representation of the vacation calendar configuration sensor."""
+
+    _attr_icon = "mdi:calendar-status"
+    _attr_has_entity_name = True
+    _attr_translation_key = "vacation_calendar"
+
+    def __init__(
+        self, entry_id: str, config: dict[str, Any], device_info: DeviceInfo
+    ) -> None:
+        """Initialize the sensor."""
+        self._attr_unique_id = f"{entry_id}_vacation_calendar"
+        self._config = config
+        self._attr_device_info = device_info
+        self._attr_name = "Vacation calendar"
+
+    @property
+    def native_value(self) -> str:
+        """Return the monitored calendar entity or Not Configured."""
+        return self._config.get(CONF_VACATION_CALENDAR) or "Not Configured"
 
 
 class DayModesTimeSensor(SensorEntity):
@@ -253,6 +317,13 @@ class DayModesTimeSensor(SensorEntity):
     @property
     def native_value(self) -> str | None:
         """Return the dynamically isolated schedule time assigned to today."""
+        if self._config_key == CONF_MORNING_TIME:
+            vacation_state = self.hass.states.get("switch.day_modes_vacation_mode")
+            if vacation_state and vacation_state.state == "on":
+                return self._config.get(
+                    CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME
+                )
+
         current_weekday_num = datetime.now().weekday()
         current_weekday_str = WEEKDAYS.get(current_weekday_num)
 
