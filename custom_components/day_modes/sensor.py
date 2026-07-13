@@ -69,9 +69,7 @@ async def async_setup_entry(
         DayModesTimeSensor(
             config_entry.entry_id, config, CONF_EVENING_TIME, device_info
         ),
-        DayModesTimeSensor(
-            config_entry.entry_id, config, CONF_NIGHT_TIME, device_info
-        ),
+        DayModesTimeSensor(config_entry.entry_id, config, CONF_NIGHT_TIME, device_info),
     ]
 
     async_add_entities(entities, update_before_add=True)

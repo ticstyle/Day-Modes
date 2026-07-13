@@ -57,7 +57,9 @@ class DayModesVacationTime(TimeEntity):
             """Return the currently configured vacation morning time."""
             time_str = self._config_entry.options.get(
                 CONF_VACATION_MORNING_TIME,
-                self._config.get(CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME),
+                self._config.get(
+                    CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME
+                ),
             )
             return datetime.strptime(time_str, "%H:%M").time()
 
