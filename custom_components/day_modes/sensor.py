@@ -331,4 +331,3 @@ class DayModesTimeSensor(SensorEntity):
             if current_weekday_str in schedule["days"]:
                 return schedule.get(self._config_key)
         return None
-        
