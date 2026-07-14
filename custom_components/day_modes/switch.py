@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
@@ -17,21 +17,6 @@ import homeassistant.util.dt as dt_util
 from .const import CONF_VACATION_CALENDAR, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
-
-if TYPE_CHECKING:
-    # This block is only seen by MyPy during static analysis.
-    # It provides the correct type signature without triggering import-time stub errors.
-    async def async_get_events(
-        hass: HomeAssistant,
-        entity_ids: list[str],
-        start_datetime: datetime,
-        end_datetime: datetime,
-    ) -> dict[str, list[Any]]:
-        """Fetch events from the calendar."""
-        ...
-else:
-    # At runtime, Home Assistant imports the actual function.
-    from homeassistant.components.calendar import async_get_events
 
 
 async def async_setup_entry(
@@ -109,14 +94,30 @@ class DayModesVacationSwitch(SwitchEntity):
         end = start + timedelta(days=1)
 
         try:
-            # Query calendar directly to see if any events are booked today
-            events_dict = await async_get_events(
-                self.hass, [calendar_entity], start, end
+            # Fetch events using the official service call API to avoid breaking internal dependency changes
+            response = await self.hass.services.async_call(
+                "calendar",
+                "get_events",
+                {
+                    "entity_id": calendar_entity,
+                    "start_date_time": start.isoformat(),
+                    "end_date_time": end.isoformat(),
+                },
+                blocking=True,
+                return_response=True,
             )
-            events = events_dict.get(calendar_entity, [])
 
-            # Switch stays on if we have at least one partial or full-day booking today
-            self._attr_is_on = len(events) > 0
+            # Safely check if we got a valid response and verify today's event list
+            if response and isinstance(response, dict):
+                calendar_data = response.get(calendar_entity, {})
+                events = calendar_data.get("events", [])
+                self._attr_is_on = len(events) > 0
+            else:
+                _LOGGER.warning(
+                    "Received empty or invalid response from calendar service for %s",
+                    calendar_entity,
+                )
+
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.error(
                 "Error fetching calendar events for %s: %s",
@@ -136,3 +137,4 @@ class DayModesVacationSwitch(SwitchEntity):
         """Turn the switch off manually."""
         self._attr_is_on = False
         self.async_write_ha_state()
+        
