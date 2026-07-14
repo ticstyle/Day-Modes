@@ -267,7 +267,7 @@ class DayModesSensor(SensorEntity):
 class DayModesVacationCalendarSensor(SensorEntity):
     """Representation of the vacation calendar configuration sensor."""
 
-    _attr_icon = "mdi:calendar-status"
+    _attr_icon = "mdi:calendar"
     _attr_has_entity_name = True
     _attr_translation_key = "vacation_calendar"
 

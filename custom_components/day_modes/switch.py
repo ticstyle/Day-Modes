@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta
+import logging
 from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.event import async_track_time_change
+import homeassistant.util.dt as dt_util
 
 from .const import CONF_VACATION_CALENDAR, DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -36,7 +41,7 @@ async def async_setup_entry(
 
 
 class DayModesVacationSwitch(SwitchEntity):
-    """Representation of the Vacation Mode Switch."""
+    """Representation of the Vacation Mode Switch with automated daily calendar tracking."""
 
     _attr_icon = "mdi:airplane"
     _attr_has_entity_name = True
@@ -54,44 +59,87 @@ class DayModesVacationSwitch(SwitchEntity):
         self._attr_is_on = False
 
     async def async_added_to_hass(self) -> None:
-        """Track the calendar state if configured."""
+        """Set up daily calendar check at startup and scheduled times."""
         calendar_entity = self._config.get(CONF_VACATION_CALENDAR)
         if not calendar_entity:
             return
 
-        @callback
-        def async_calendar_listener(event: Event[EventStateChangedData]) -> None:
-            """Handle calendar state changes."""
-            self._update_from_calendar()
-
+        # Run scheduled daily checks 47 seconds after midnight to reduce system loads
         self.async_on_remove(
-            async_track_state_change_event(
+            async_track_time_change(
                 self.hass,
-                [calendar_entity],
-                async_calendar_listener,
+                self._async_scheduled_update,
+                hour=0,
+                minute=0,
+                second=47,
             )
         )
-        self._update_from_calendar()
 
-    def _update_from_calendar(self) -> None:
-        """Check the calendar state and turn the switch on or off."""
+        # Perform an initial update on startup
+        await self._async_update_from_calendar()
+
+    @callback
+    def _async_scheduled_update(self, now: datetime) -> None:
+        """Handle scheduled trigger by creating an async task."""
+        self.hass.async_create_task(self._async_update_from_calendar())
+
+    async def _async_update_from_calendar(self) -> None:
+        """Query the calendar and update state based on today's events."""
         calendar_entity = self._config.get(CONF_VACATION_CALENDAR)
         if not calendar_entity:
             return
 
-        state = self.hass.states.get(calendar_entity)
-        if state and state.state == "on":
-            self._attr_is_on = True
-        else:
-            self._attr_is_on = False
+        now = dt_util.now()
+        start = dt_util.start_of_local_day(now)
+        end = start + timedelta(days=1)
+
+        try:
+            # Fetch events using the official service call API to avoid breaking internal dependency changes
+            response = await self.hass.services.async_call(
+                "calendar",
+                "get_events",
+                {
+                    "entity_id": calendar_entity,
+                    "start_date_time": start.isoformat(),
+                    "end_date_time": end.isoformat(),
+                },
+                blocking=True,
+                return_response=True,
+            )
+
+            # Use type narrowing to guarantee Mypy that the structure matches our expected format
+            if isinstance(response, dict):
+                calendar_data = response.get(calendar_entity)
+                if isinstance(calendar_data, dict):
+                    events = calendar_data.get("events")
+                    if isinstance(events, list):
+                        self._attr_is_on = len(events) > 0
+                    else:
+                        self._attr_is_on = False
+                else:
+                    self._attr_is_on = False
+            else:
+                _LOGGER.warning(
+                    "Received empty or invalid response from calendar service for %s",
+                    calendar_entity,
+                )
+
+        except Exception as err:  # pylint: disable=broad-except
+            _LOGGER.error(
+                "Error fetching calendar events for %s: %s",
+                calendar_entity,
+                err,
+            )
+            # Retain current switch state if calendar lookup times out or fails
+
         self.async_write_ha_state()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        """Turn the switch on."""
+        """Turn the switch on manually."""
         self._attr_is_on = True
         self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        """Turn the switch off."""
+        """Turn the switch off manually."""
         self._attr_is_on = False
         self.async_write_ha_state()
