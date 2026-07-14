@@ -80,6 +80,7 @@ class DayModesVacationSwitch(SwitchEntity):
         if self.hass.is_running:
             await self._async_update_from_calendar()
         else:
+
             @callback
             def _async_ha_started(event: Event) -> None:
                 """Run initial calendar sync once core registry and services are fully loaded."""
@@ -154,4 +155,3 @@ class DayModesVacationSwitch(SwitchEntity):
         """Turn the switch off manually."""
         self._attr_is_on = False
         self.async_write_ha_state()
-        
