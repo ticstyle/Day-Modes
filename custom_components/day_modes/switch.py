@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 import logging
 from typing import Any
 
-from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.const import EVENT_HOMEASSISTANT_STARTED
+from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_time_change
@@ -75,8 +75,18 @@ class DayModesVacationSwitch(SwitchEntity):
             )
         )
 
-        # Perform an initial update on startup
-        await self._async_update_from_calendar()
+        # Defer initial check if Home Assistant is still starting up to avoid missing action schemas
+        if self.hass.is_running:
+            await self._async_update_from_calendar()
+        else:
+            @callback
+            def _async_ha_started(event: Event) -> None:
+                """Run initial calendar sync once core registry and services are fully loaded."""
+                self.hass.async_create_task(self._async_update_from_calendar())
+
+            self.hass.bus.async_listen_once(
+                EVENT_HOMEASSISTANT_STARTED, _async_ha_started
+            )
 
     @callback
     def _async_scheduled_update(self, now: datetime) -> None:
@@ -143,3 +153,4 @@ class DayModesVacationSwitch(SwitchEntity):
         """Turn the switch off manually."""
         self._attr_is_on = False
         self.async_write_ha_state()
+        
