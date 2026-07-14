@@ -4,9 +4,8 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 import logging
-from typing import Any, Callable, Coroutine, cast
+from typing import TYPE_CHECKING, Any
 
-from homeassistant.components.calendar import async_get_events as ha_async_get_events
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -19,14 +18,20 @@ from .const import CONF_VACATION_CALENDAR, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-# Define the signature for async_get_events to satisfy Mypy
-AsyncGetEventsType = Callable[
-    [HomeAssistant, list[str], datetime, datetime],
-    Coroutine[Any, Any, dict[str, list[Any]]],
-]
-
-# Cast the imported function to our defined type
-async_get_events = cast(AsyncGetEventsType, ha_async_get_events)
+if TYPE_CHECKING:
+    # This block is only seen by MyPy during static analysis.
+    # It provides the correct type signature without triggering import-time stub errors.
+    async def async_get_events(
+        hass: HomeAssistant,
+        entity_ids: list[str],
+        start_datetime: datetime,
+        end_datetime: datetime,
+    ) -> dict[str, list[Any]]:
+        """Fetch events from the calendar."""
+        ...
+else:
+    # At runtime, Home Assistant imports the actual function.
+    from homeassistant.components.calendar import async_get_events
 
 
 async def async_setup_entry(
@@ -131,3 +136,4 @@ class DayModesVacationSwitch(SwitchEntity):
         """Turn the switch off manually."""
         self._attr_is_on = False
         self.async_write_ha_state()
+        
