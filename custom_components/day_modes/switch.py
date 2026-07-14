@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import logging
 from typing import Any
 
+from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STARTED
 from homeassistant.core import Event, HomeAssistant, callback
