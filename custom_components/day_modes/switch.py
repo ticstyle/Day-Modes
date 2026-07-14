@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 import logging
-from typing import Any
+from typing import Any, Callable, Coroutine, cast
 
-from homeassistant.components.calendar import async_get_events
+from homeassistant.components.calendar import async_get_events as ha_async_get_events
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -18,6 +18,15 @@ import homeassistant.util.dt as dt_util
 from .const import CONF_VACATION_CALENDAR, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
+
+# Define the signature for async_get_events to satisfy Mypy
+AsyncGetEventsType = Callable[
+    [HomeAssistant, list[str], datetime, datetime],
+    Coroutine[Any, Any, dict[str, list[Any]]],
+]
+
+# Cast the imported function to our defined type
+async_get_events = cast(AsyncGetEventsType, ha_async_get_events)
 
 
 async def async_setup_entry(
@@ -122,3 +131,4 @@ class DayModesVacationSwitch(SwitchEntity):
         """Turn the switch off manually."""
         self._attr_is_on = False
         self.async_write_ha_state()
+        
