@@ -65,14 +65,14 @@ class DayModesVacationSwitch(SwitchEntity):
         if not calendar_entity:
             return
 
-        # Run scheduled daily checks 18 seconds after midnight to reduce system loads
+        # Run scheduled daily checks 47 seconds after midnight to reduce system loads
         self.async_on_remove(
             async_track_time_change(
                 self.hass,
                 self._async_scheduled_update,
                 hour=0,
                 minute=0,
-                second=18,
+                second=47,
             )
         )
 
@@ -122,3 +122,4 @@ class DayModesVacationSwitch(SwitchEntity):
         """Turn the switch off manually."""
         self._attr_is_on = False
         self.async_write_ha_state()
+        
