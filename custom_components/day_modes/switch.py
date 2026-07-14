@@ -107,11 +107,17 @@ class DayModesVacationSwitch(SwitchEntity):
                 return_response=True,
             )
 
-            # Safely check if we got a valid response and verify today's event list
-            if response and isinstance(response, dict):
-                calendar_data = response.get(calendar_entity, {})
-                events = calendar_data.get("events", [])
-                self._attr_is_on = len(events) > 0
+            # Use type narrowing to guarantee Mypy that the structure matches our expected format
+            if isinstance(response, dict):
+                calendar_data = response.get(calendar_entity)
+                if isinstance(calendar_data, dict):
+                    events = calendar_data.get("events")
+                    if isinstance(events, list):
+                        self._attr_is_on = len(events) > 0
+                    else:
+                        self._attr_is_on = False
+                else:
+                    self._attr_is_on = False
             else:
                 _LOGGER.warning(
                     "Received empty or invalid response from calendar service for %s",
@@ -137,3 +143,4 @@ class DayModesVacationSwitch(SwitchEntity):
         """Turn the switch off manually."""
         self._attr_is_on = False
         self.async_write_ha_state()
+        
