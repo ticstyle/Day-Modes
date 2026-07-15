@@ -76,7 +76,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.14"
+          cache: "pip" # Cache packages to speed up consecutive validation steps
 
       - name: Install Mypy & Dependencies
         run: |
