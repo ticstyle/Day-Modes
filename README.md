@@ -1,14 +1,17 @@
 # Day modes
 
-![](https://img.shields.io/github/v/release/ticstyle/Day-Modes?style=for-the-badge&color=blue)
-![](https://img.shields.io/badge/Home%20Assistant-Custom%20Integration-blue?style=for-the-badge&logo=home-assistant)
-[![Hassfest](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/pipeline.yml?branch=main&job=hassfest&label=Hassfest&style=for-the-badge)](https://github.com/ticstyle/Day-Modes/actions/workflows/pipeline.yml)
-[![HACS Validation](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/pipeline.yml?branch=main&job=hacs&label=HACS&style=for-the-badge)](https://github.com/ticstyle/Day-Modes/actions/workflows/pipeline.yml)
-[![Ruff / Format](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/pipeline.yml?branch=main&job=sync_and_format&label=Ruff%20%2F%20Format&style=for-the-badge)](https://github.com/ticstyle/Day-Modes/actions/workflows/pipeline.yml)
-[![Mypy](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/pipeline.yml?branch=main&job=mypy&label=Mypy&style=for-the-badge)](https://github.com/ticstyle/Day-Modes/actions/workflows/pipeline.yml)
-![](https://img.shields.io/github/license/ticstyle/Day-Modes?style=for-the-badge)
-![](https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=41BDF5&logo=home-assistant&label=installs&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json&query=%24.Day-Modes.total)
-![](https://img.shields.io/github/issues/ticstyle/Day-Modes?style=for-the-badge&color=orange)
+![Latest Release](https://img.shields.io/github/v/release/ticstyle/Day-Modes?color=blue&label=Release)
+![Last Updated](https://img.shields.io/github/last-commit/ticstyle/Day-Modes?path=hacs.json&label=Maintained)
+![Issues](https://img.shields.io/github/issues/ticstyle/Day-Modes?color=orange&label=Issues)
+![Custom Integration](https://img.shields.io/badge/Home%20Assistant-Custom%20Integration-blue?logo=home-assistant)
+![Home Assistant Required Version](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/ticstyle/Day-Modes/main/hacs.json&query=%24.homeassistant&suffix=%2B&label=Home%20Assistant&logo=homeassistant)
+
+![License](https://img.shields.io/github/license/ticstyle/Day-Modes?label=License)
+[![Hassfest](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/pipeline.yml?branch=main&job=hassfest&label=Hassfest)](https://github.com/ticstyle/Day-Modes/actions/workflows/pipeline.yml)
+[![HACS Validation](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/pipeline.yml?branch=main&job=hacs&label=HACS)](https://github.com/ticstyle/Day-Modes/actions/workflows/pipeline.yml)
+[![Ruff / Format](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/pipeline.yml?branch=main&job=sync_and_format&label=Ruff%20%2F%20Format)](https://github.com/ticstyle/Day-Modes/actions/workflows/pipeline.yml)
+[![Mypy](https://img.shields.io/github/actions/workflow/status/ticstyle/Day-Modes/pipeline.yml?branch=main&job=mypy&label=Mypy)](https://github.com/ticstyle/Day-Modes/actions/workflows/pipeline.yml)
+![Installs](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=Known%20installs&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json&query=%24.Day-Modes.total)
 
 A modern Home Assistant custom integration that creates a dynamic device and sensor ecosystem to automatically track and cycle through custom day modes (Morning, Day, Evening, Night, Away) based on a personalized weekday schedule matrix, zone occupancy, and automated vacation sensing.
 
