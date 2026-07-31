@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Premium 24h day cycle gradient (Morning yellow -> Day orange -> Evening purple -> Night blue) -->
+    <linearGradient id="dayCycleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB300" />
+      <stop offset="35%" stop-color="#F4511E" />
+      <stop offset="70%" stop-color="#6A1B9A" />
+      <stop offset="100%" stop-color="#1A237E" />
+    </linearGradient>
+  </defs>
+
+  <!-- Icon Background with Home Assistant standard rounded corners -->
+  <rect width="512" height="512" rx="112" fill="url(#dayCycleGrad)" />
+
+  <!-- Minimalist House + Clock Cycle Graphic -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Outer Clock Ring / Cycle Arrow (broken at the top for style) -->
+    <path d="M 256,90 A 166,166 0 1,1 190,104" stroke-dasharray="12 12" stroke-width="12" opacity="0.6" />
+    <path d="M 256,90 A 166,166 0 1,1 255.9,90" />
+    
+    <!-- Modern Minimalist House -->
+    <path d="M 190,280 L 190,390 L 322,390 L 322,280" stroke-width="24" />
+    <path d="M 154,290 L 256,180 L 358,290" stroke-width="24" />
+    
+    <!-- Clock Hands inside the house representing time/modes -->
+    <path d="M 256,270 L 256,230" stroke-width="18" />
+    <path d="M 256,270 L 290,285" stroke-width="18" />
+    <circle cx="256" cy="270" r="10" fill="#FFFFFF" stroke="none" />
+  </g>
+</svg>
