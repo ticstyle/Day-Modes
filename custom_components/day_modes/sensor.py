@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, time
 from typing import Any
 
+import homeassistant.util.dt as dt_util
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNKNOWN
@@ -39,9 +40,9 @@ from .const import (
 def parse_time_string(time_str: str) -> time:
     """Parse time string supporting both HH:MM and legacy HH:MM:SS formats."""
     try:
-        return datetime.strptime(time_str, "%H:%M").time()
+        return datetime.strptime(time_str, "%H:%M").time()  # noqa: DTZ007
     except ValueError:
-        return datetime.strptime(time_str, "%H:%M:%S").time()
+        return datetime.strptime(time_str, "%H:%M:%S").time()  # noqa: DTZ007
 
 
 async def async_setup_entry(
@@ -175,7 +176,7 @@ class DayModesSensor(SensorEntity):
 
     def _get_active_times(self) -> dict[str, time] | None:
         """Extract the exact active schedule profile mapped to the current day string."""
-        current_weekday_num = datetime.now().weekday()
+        current_weekday_num = dt_util.now().weekday()
         current_weekday_str = WEEKDAYS.get(current_weekday_num)
 
         for schedule in self._config.get(CONF_SCHEDULES, []):
@@ -215,7 +216,7 @@ class DayModesSensor(SensorEntity):
         vacation_state = self.hass.states.get("switch.day_modes_vacation_mode")
         is_vacation = vacation_state is not None and vacation_state.state == "on"
 
-        current_time = datetime.now().time()
+        current_time = dt_util.now().time()
 
         if is_vacation:
             vacation_time_str = self._config.get(
@@ -324,7 +325,7 @@ class DayModesTimeSensor(SensorEntity):
                     CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME
                 )
 
-        current_weekday_num = datetime.now().weekday()
+        current_weekday_num = dt_util.now().weekday()
         current_weekday_str = WEEKDAYS.get(current_weekday_num)
 
         for schedule in self._config.get(CONF_SCHEDULES, []):
