@@ -136,7 +136,7 @@ class DayModesVacationSwitch(SwitchEntity):
                     calendar_entity,
                 )
 
-        except Exception as err:  # pylint: disable=broad-except
+        except (OSError, TimeoutError, ValueError) as err:
             _LOGGER.error(
                 "Error fetching calendar events for %s: %s",
                 calendar_entity,

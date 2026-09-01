@@ -59,7 +59,7 @@ class DayModesVacationTime(TimeEntity):
             CONF_VACATION_MORNING_TIME,
             self._config.get(CONF_VACATION_MORNING_TIME, DEFAULT_VACATION_MORNING_TIME),
         )
-        return datetime.strptime(time_str, "%H:%M").time()
+        return datetime.strptime(time_str, "%H:%M").time()  # noqa: DTZ007
 
     async def async_set_value(self, value: time) -> None:
         """Update the option value in the configuration entry live."""
