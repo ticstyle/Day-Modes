@@ -15,7 +15,7 @@
 
 A modern Home Assistant custom integration that creates a dynamic device and sensor ecosystem to automatically track and cycle through custom day modes (Morning, Day, Evening, Night, Away) based on a personalized weekday schedule matrix, zone occupancy, and automated vacation sensing.
 
-To add this integration, please add the custom repository `[https://github.com/ticstyle/Day-Modes](https://github.com/ticstyle/Day-Modes)` to HACS in your Home Assistant setup.
+To add this integration, please search for it via HACS in your Home Assistant setup.
 
 ## 🌐 Supported Languages / Språk
 The integration natively defaults to English for backend operations but includes full frontend translations for Swedish. Thanks to native State Translations, state values will display localized text (e.g., *Morgon*, *Dag*, *Borta*, *Semesterläge*) seamlessly in your UI while preserving standard raw values for backend tracking.
@@ -30,8 +30,6 @@ The integration natively defaults to English for backend operations but includes
 * **100% Async Engine:** Uses Home Assistant's event-driven architecture to subscribe to precise state and time changes, ensuring zero unnecessary CPU polling cycles.
 
 ## 🚀 Installation
-
-[![](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ticstyle&repository=Day-Modes&category=Integration)
 
 Via [HACS](https://hacs.xyz/) or manually copy the `day_modes` folder from the [latest release](https://github.com/ticstyle/Day-Modes/releases/latest) to the `custom_components` folder inside your Home Assistant configuration directory.
 
