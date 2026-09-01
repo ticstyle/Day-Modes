@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, time
 from typing import Any
 
+import homeassistant.util.dt as dt_util
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNKNOWN
@@ -15,7 +16,6 @@ from homeassistant.helpers.event import (
     async_track_state_change_event,
     async_track_time_change,
 )
-import homeassistant.util.dt as dt_util
 
 from .const import (
     CONF_DAY_TIME,
