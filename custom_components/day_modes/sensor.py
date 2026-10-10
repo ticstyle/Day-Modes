@@ -40,9 +40,9 @@ from .const import (
 def parse_time_string(time_str: str) -> time:
     """Parse time string supporting both HH:MM and legacy HH:MM:SS formats."""
     try:
-        return datetime.strptime(time_str, "%H:%M").time()  # noqa: DTZ007
+        return datetime.strptime(time_str, "%H:%M").time()
     except ValueError:
-        return datetime.strptime(time_str, "%H:%M:%S").time()  # noqa: DTZ007
+        return datetime.strptime(time_str, "%H:%M:%S").time()
 
 
 async def async_setup_entry(
